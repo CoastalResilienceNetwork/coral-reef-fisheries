@@ -1,0 +1,41 @@
+{
+	"Micronesia" : {
+		"EXTENT" : [157.830620,6.713028,158.407402,7.03649]
+	},
+	"Chuuk" : {
+		"EXTENT" : [151.414948,7.266608,151.703339,7.428177],
+		"SNAPSHOT": "http://ow-maps.oceanwealth.org/NCP_Snapshots/Cuba.pdf"
+	},
+	"Federated States of Micronesia (FSM)" : {
+		"EXTENT" : [157.830620,6.713028,158.407402,7.03649],
+		"SNAPSHOT": "http://ow-maps.oceanwealth.org/NCP_Snapshots/Dominican_Republic.pdf"
+	},
+	"Guam" : {
+		"EXTENT" : [144.340439,13.154376,145.237198,13.773400],
+		"SNAPSHOT": "http://ow-maps.oceanwealth.org/NCP_Snapshots/Indonesia.pdf"
+	},
+	"Kosrae" : {
+		"EXTENT" : [162.775669,5.221221,163.064060,5.383430],
+		"SNAPSHOT": "http://ow-maps.oceanwealth.org/NCP_Snapshots/Jamaica.pdf"
+	},
+	"Marshall Isl." : {
+		"EXTENT" : [163.372192,5.369929,172.600708,10.531020],
+		"SNAPSHOT": "http://ow-maps.oceanwealth.org/NCP_Snapshots/Malaysia.pdf"
+	},
+	"Northern Mariana Isl. (CNMI)" : {
+		"EXTENT" : [144.340439,13.154376,145.237198,13.773400],
+		"SNAPSHOT": "http://ow-maps.oceanwealth.org/NCP_Snapshots/Mexico.pdf"
+	},
+	"Palau" : {
+		"EXTENT" : [132.817841,6.536374,135.124969,7.829371],
+		"SNAPSHOT": "http://ow-maps.oceanwealth.org/NCP_Snapshots/Philippines.pdf"
+	},
+	"Pohnpei" : {
+		"EXTENT" : [157.830620,6.713028,158.407402,7.03649],
+		"SNAPSHOT": "http://ow-maps.oceanwealth.org/NCP_Snapshots/Saudi_Arabia.pdf"
+	},
+	"Yap" : {
+		"EXTENT" : [137.723236,9.342705,138.300018,9.664046],
+		"SNAPSHOT": "http://ow-maps.oceanwealth.org/NCP_Snapshots/Taiwan.pdf"
+	}
+}
