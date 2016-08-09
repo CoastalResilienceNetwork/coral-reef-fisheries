@@ -458,7 +458,7 @@
 	    	</div>
 
 	    	<div class="stat" data-layer-idx="4" data-layer="Standing_Stock_M2">
-	    		<span class="number"><span class="variable"><%= global.Standing_Stock_M2.mean %></span></span>
+	    		<span class="number"><span class="variable"><%= global.Standing_Stock_M2.mean %></span><%= global.Standing_Stock_M2.unit %></span>
 	    		<span class="description"> Current Standing Stock
 	    			<i data-tooltip="" class="fa fa-info-circle info-tooltip"></i></span>
 	    		
@@ -472,14 +472,14 @@
 	    	</div>
 
 	    	<div class="stat" data-layer-idx="5" data-layer="Percent_Gain_M4">
-	    		<span class="number"><span class="variable"><%= global.Percent_Gain_M4.mean %></span></span>
+	    		<span class="number"><span class="variable"><%= global.Percent_Gain_M4.mean %><%= global.Percent_Gain_M4.unit %></span><%= global.Percent_Gain_M4.unit %></span>
 	    		<span class="description">Predicted Gain Standing Stock
 	    			<i data-tooltip="" class="fa fa-info-circle info-tooltip"></i></span>
 
 	    	</div>
 
 	    	<div class="stat" data-layer-idx="7" data-layer="Recovery_Years_M12">
-	    		<span class="number"><span class="variable"><%= global.Recovery_Years_M12.mean %></span></span>
+	    		<span class="number"><span class="variable"><%= global.Recovery_Years_M12.mean %></span> <%= global.Recovery_Years_M12.unit %></span>
 	    		<span class="description">Predicted Recovery Time
 	    			<i data-tooltip="" class="fa fa-info-circle info-tooltip"></i></span>
 
