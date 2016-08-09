@@ -113,7 +113,7 @@ define([
                 this.fisheriesLayer.setVisibleLayers([3]);
 
                 this.map.addLayer(this.fisheriesLayer);
-
+                console.log(this.fisheriesLayer)
             },
 
             // This function runs everytime the plugin is open.  If the plugin was previously minimized, it restores the plugin
@@ -130,6 +130,7 @@ define([
                     
                     this.firstLoad();
                     this.region = "Micronesia";
+                    this.layer = "Fishing_Pressure_M1";
                     //this.period = "ANN";
                     //this.layer = "people";
                     //this.variable = "PF";
@@ -139,14 +140,14 @@ define([
 
                 // restore state of people, capital, area selector
                 this.$el.find(".stat.active").removeClass("active");
-                this.$el.find("." + this.layer + ".stat").addClass("active");
+                $(".stat[data-layer='" + this.layer + "']").addClass("active");
 
                 // Restore state of region select
                 this.$el.find(".region-select").val(this.region);
 
                 this.changeRegion();
 
-                //this.changeScenario();
+                this.changeScenario();
 
             },
 
@@ -159,7 +160,6 @@ define([
             // zoom to the country based on the bookmark in the extent-bookmarks.json file and hide data for all other countries
             changeRegion: function() {
                 this.region = this.$el.find(".region-select").val();
-                console.log(this.region)
 
                 // Show/hide the download country summary button
                 /*if (this.region === "Global") {
@@ -205,14 +205,15 @@ define([
             changeScenarioClick: function(e) {
                 this.layer = $(e.currentTarget).closest(".stat").data("layer");
                 this.layerIDX = $(e.currentTarget).closest(".stat").data("layer-idx");
-                this.$el.find(".stat.active").removeClass("active");
-                $(e.currentTarget).closest(".stat").addClass("active");
-
+                
                 this.changeScenario();
             },
 
             // Update the renderer to reflect storm return period and the fact being displayed.
             changeScenario: function() {
+                this.$el.find(".stat.active").removeClass("active");
+                $(".stat[data-layer='" + this.layer + "']").addClass("active");
+
                 this.fisheriesLayer.setVisibleLayers([this.layerIDX]);
                 this.fisheriesLayer.refresh();
 
