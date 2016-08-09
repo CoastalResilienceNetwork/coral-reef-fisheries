@@ -68,10 +68,8 @@ define([
                 this.$el = $(this.container);
 
                 // Default Settings
-                this.region = "Global";
-                this.period = "ANN";
-                this.layer = "people";
-                this.variable = "PF";
+                this.region = "Micronesia";
+                this.layerIDX = 3;
 
                 this.bindEvents();
 
@@ -109,11 +107,10 @@ define([
             // It sets up the layers with their default settings
 
             firstLoad: function() {
-                this.fisheriesLayer = new ArcGISDynamicMapServiceLayer("http://services.coastalresilience.org/arcgis/rest/services/OceanWealth/Natural_Coastal_Protection/MapServer", {});
-                this.fisheriesLayer.setVisibleLayers([3]);
+                this.fisheriesLayer = new ArcGISDynamicMapServiceLayer("http://dev.services2.coastalresilience.org/arcgis/rest/services/OceanWealth/Micronesia_Coral_Reef_Fisheries/MapServer", {});
+                this.fisheriesLayer.setVisibleLayers([this.layerIDX]);
 
                 this.map.addLayer(this.fisheriesLayer);
-                console.log(this.fisheriesLayer)
             },
 
             // This function runs everytime the plugin is open.  If the plugin was previously minimized, it restores the plugin
@@ -215,7 +212,7 @@ define([
                 $(".stat[data-layer='" + this.layer + "']").addClass("active");
 
                 this.fisheriesLayer.setVisibleLayers([this.layerIDX]);
-                this.fisheriesLayer.refresh();
+                //this.fisheriesLayer.refresh();
 
                 //this.updateChart();
                 //this.updateLegend();
