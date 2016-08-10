@@ -245,7 +245,6 @@
 	}
 
 	.stat {
-		display: table-row;
 		height: 50px;
 	}
 
@@ -256,14 +255,17 @@
 
 	.stat .number {
 		display: table-cell;
-    	width: 12%;
 		cursor: pointer;
+		width: 38%;
 		padding-left: 8px;
-		text-align: right;
 		font-size: 45px;
 	    font-weight: bold;
 	    color: #d8d8d8;
 	    transition: color 0.35s linear;
+	}
+
+	.stat .units {
+		font-size: 28px;
 	}
 
 	.stat:hover .description,
