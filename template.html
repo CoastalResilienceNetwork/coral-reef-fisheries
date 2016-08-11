@@ -123,7 +123,8 @@
 		position: relative;
 		padding: 10px 8px;
 		background-color: #f3f4f3;
-		height: 90px;
+		min-height: 90px;
+		text-align: center;
 	}
 
 	.storm-buttons-container {
@@ -131,9 +132,13 @@
 		width: 175px;
 	}
 
+	.region-select-container {
+		display: inline-block;
+	}
+
 	.storm-buttons-container .control-title,
 	.region-select-container .control-title {
-    	display: inline-block;
+    	
 		margin-bottom: 6px;
     	font-weight: bold;
 	}
@@ -151,13 +156,15 @@
 
 	.styled-select {
 		position: relative;
-		width: 150px;
+		display: inline-block;
+		width: 145px;
 		height: 36px;
 		overflow: hidden;
 		border: 2px solid #aaaaaa;
 		border-radius: 4px;
 		background-color: #fff;
 		cursor: pointer;
+		margin-right: 5px;
 	}
 
 	.styled-select::after {
@@ -173,7 +180,7 @@
 
 	.styled-select select {
 		background: transparent;
-		width: 168px;
+		width: 150px;
 		padding: 5px;
 		font-size: 16px;
 		line-height: 1;
@@ -187,17 +194,9 @@
 		cursor: pointer;
 	}
 
-	.styled-select select optgroup,
-	.styled-select select option {
-
-	}
-
 	.download-summary {
-		display: block;
-		margin-top: 14px;
-	    margin-left: 1px;
+		display: inline-block;
 	    margin-right: 6px;
-	    margin-bottom: 6px;
 	    color: #fff !important;
 	    cursor: pointer;
 	    border: 1px solid #226491;
@@ -208,6 +207,8 @@
 	    box-shadow: 2px 2px 5px 1px rgba(34,100,145, 0.2);
 	    transition: box-shadow 0.2s;
 	    font-size: 16px;
+	    min-height: 36px;
+	    max-width: 115px;
     }
 
     .download-summary:active {
@@ -237,6 +238,7 @@
     .stats-description {
     	padding: 8px;
 		font-size: 16px;
+		text-align: center;
     }
 
 	.stats-container {
@@ -245,7 +247,8 @@
 	}
 
 	.stat {
-		height: 50px;
+		min-height: 50px;
+		text-align: center;
 	}
 
 	.stat.active .description,
@@ -254,9 +257,8 @@
 	}
 
 	.stat .number {
-		display: table-cell;
+		display: inline-block;
 		cursor: pointer;
-		width: 38%;
 		padding-left: 8px;
 		font-size: 45px;
 	    font-weight: bold;
@@ -275,8 +277,7 @@
 
 	.stat .description {
 		cursor: pointer;
-	    display: table-cell;
-    	width: 50%;
+	    display: inline-block;
 	    padding-left: 10px;
 		color: #d8d8d8;
 	    font-size: 19px;
@@ -407,20 +408,9 @@
 	}
 
 	.region-container{
-		position: absolute;
+		text-align: left;
 	}
 
-	.download-summary.snapshot {
-		position: absolute;
-    	left: 162px;
-    	width: 120px;
-	}
-
-	.download-summary.report {
-		position: absolute;
-    	width: 120px;
-    	left: 286px;
-	}
 
 </style>
 
@@ -445,7 +435,7 @@
 			    	</div>
 			    </div>
 	    	</div>
-	    	<a class="download-summary snapshot js-getSnapshot" href="plugins/coral_reef_fisheries/brief.pdf" target="_blank">Download Snapshot <i class="fa fa-file-pdf-o" aria-hidden="true"></i></a>
+	    	<a class="download-summary snapshot" href="plugins/coral_reef_fisheries/brief.pdf" target="_blank">Download Snapshot <i class="fa fa-file-pdf-o" aria-hidden="true"></i></a>
 			<a class="download-summary report" href="" target="_blank">Download Policy Brief<i class="fa fa-file-pdf-o" aria-hidden="true"></i></a>
 
 	    </div>
@@ -481,7 +471,7 @@
 	    	</div>
 
 	    	<div class="stat" data-layer-idx="7" data-layer="Recovery_Years_M12">
-	    		<span class="number"><span class="variable"><%= global.Recovery_Years_M12.mean %></span> <span class="units">Years</span></span>
+	    		<span class="number"><span class="variable"><%= global.Recovery_Years_M12.mean %></span> <span class="units">Yrs</span></span>
 	    		<span class="description">Predicted Recovery Time
 	    			<i data-tooltip="Estimated time it would take for a cell to recover up to 90% of the predicted fish stock capacity of that cell if fishing stopped." class="fa fa-info-circle info-tooltip"></i></span>
 
