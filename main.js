@@ -169,24 +169,20 @@ define([
                 if (self.countryConfig[self.region].label) {
                     self.$el.find(".region-select option:selected").text(self.countryConfig[self.region].label);
                 }
-                
-                // Show/hide the download country summary button
-                /*if (this.region === "Global") {
-                    this.$el.find(".js-getSnapshot").hide();
-                } else {
-                    this.$el.find(".js-getSnapshot").show();
-                }*/
 
-                var layerDefs = [];
                 var regionExtent = this.countryConfig[this.region].EXTENT;
-
                 var extent = new esri.geometry.Extent(regionExtent[0],regionExtent[1],regionExtent[2],regionExtent[3]);
-                this.map.setExtent(extent);
 
-                // Set the data extent
+                if (this.region === "Micronesia" ) {
+                    this.fisheriesLayer.setLayerDefinitions([]);
+                } else {
+                    var layerDefs = [];
+                    var params = this.countryConfig[this.region].query;
+                    layerDefs[this.layerIDX] = params.type + "='" + params.label + "'";
+                    this.fisheriesLayer.setLayerDefinitions(layerDefs);
+                }    
+                
                 this.map.setExtent(extent);
-
-                //this.updateChart();
 
                 var pressure = this.data[this.region].Fishing_Pressure_M1.mean;
                 var stock = this.data[this.region].Standing_Stock_M2.mean;
