@@ -50,11 +50,11 @@ define([
         return declare(PluginBase, {
             toolbarName: "Micronesia",
             fullName: "Configure and control layers to be overlayed on the base map.",
-			infoGraphic: "plugins/natural_coastal_protection/coastalprotection.jpg",
+			//infoGraphic: "plugins/natural_coastal_protection/coastalprotection.jpg",
             resizable: true,
             width: 425,
             height: 740,
-            showServiceLayersInLegend: false, // Disable the default legend item which doesn't pick up our custom class breaks
+            showServiceLayersInLegend: true, // Disable the default legend item which doesn't pick up our custom class breaks
             allowIdentifyWhenActive: false,
 
             initialize: function(frameworkParameters, currentRegion) {
@@ -66,6 +66,7 @@ define([
                 this.$el = $(this.container);
 
                 // Default Settings
+                this.stat = "Biomass_Ratio_M11";
                 this.region = "Micronesia";
                 this.layerIDX = 3;
 
@@ -76,12 +77,11 @@ define([
                 this.chart.position.margin = {
                     top: 30,
                     right: 30,
-                    left: 100,
-                    bottom: 30
+                    left: 60,
+                    bottom: 50
                 };
                 this.chart.position.width = (this.width - 10)- this.chart.position.margin.left - this.chart.position.margin.right;
-                this.chart.position.height = 235  - this.chart.position.margin.top - this.chart.position.margin.bottom;
-
+                this.chart.position.height = 255  - this.chart.position.margin.top - this.chart.position.margin.bottom;
               
             },
 
@@ -117,7 +117,7 @@ define([
                 var self = this;
                 
                 this.render();
-                //this.renderChart();
+                this.renderChart();
 
                 // If the plugin hasn't been opened, or if it was closed (not-minimized) run the firstLoad function and reset the
                 // default variables
@@ -126,12 +126,7 @@ define([
                     this.firstLoad();
                     this.region = "Micronesia";
                     this.layer = "Fishing_Pressure_M1";
-                    //this.period = "ANN";
-                    //this.layer = "people";
-                    //this.variable = "PF";
                 }
-
-                // Restore storm period radios
 
                 // restore state of people, capital, area selector
                 this.$el.find(".stat.active").removeClass("active");
@@ -170,14 +165,6 @@ define([
                 this.map.setExtent(extent);
 
                 // Set the data extent
-                /*if (this.region === "Global") {
-                    layerDefs[0] = ""; //this.activeCountries;
-                } else if (this.region === "US/Puerto Rico") {
-                    layerDefs[0] = "COUNTRY='United States & Puerto Rico'";
-                } else {
-                    layerDefs[0] = "COUNTRY='" + this.region + "'";
-                }*/
-                //this.coastalProtectionLayer.setLayerDefinitions(layerDefs);
                 this.map.setExtent(extent);
 
                 //this.updateChart();
@@ -194,6 +181,8 @@ define([
                 this.$el.find(".stat[data-layer='Percent_Gain_M4'] .variable").html(predicted);
                 this.$el.find(".stat[data-layer='Recovery_Years_M12'] .variable").html(recovery);
 
+                this.updateChart();
+
             },
 
             // Capture the click from the fact number click events and pass to the changeScenario function
@@ -209,11 +198,11 @@ define([
                 this.$el.find(".stat.active").removeClass("active");
                 $(".stat[data-layer='" + this.layer + "']").addClass("active");
 
-                this.fisheriesLayer.setVisibleLayers([this.layerIDX]);
-                //this.fisheriesLayer.refresh();
+                this.stat = this.layer
 
-                //this.updateChart();
-                //this.updateLegend();
+                this.fisheriesLayer.setVisibleLayers([this.layerIDX]);
+
+                this.updateChart();
                 
             },
 
@@ -228,38 +217,7 @@ define([
                 $(this.container).empty().append($el);
 
             },
-
-            // Draw the custom legend based on our custom class breaks and the current visibility of each layer
-            updateLegend: function () {
-                var html = "";
-
-
-                if (this.fisheriesLayer.visible) {
-                    if (this.layer === "people") {
-                        html += "People Protected (No.)<br>";
-                    } else if (this.layer === "capital") {
-                        html += "Built Capital Protected ($Millions)<br>";
-                    } else if (this.layer === "area") {
-                        html += "Area Protected (sq km)<br>";
-                    }
-
-                    _.each(this.mapClassBreaks[this.layer], function (classbreak) {
-                        html += "<span style='background: rgb(";
-                        html += classbreak[2][0] + ",";
-                        html += classbreak[2][1] + ",";
-                        html += classbreak[2][2];
-                        html += ")' class='legend-item coastal-protection'></span>";
-                        html += classbreak[3] + "<br>";
-                    }, this);
-
-                    
-                }
-
-                $(this.legendContainer).show().html(html);
-
-                return html;
-            },
-
+           
             // Show graph tooltip on hover
             showGraphTooltip: function(d, self) {
                 self.$el.find(".ncp-tooltip").html(parseInt(d.y).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")).css({width: "auto"}).show();
@@ -296,46 +254,33 @@ define([
             renderChart: function() {
                 var self = this;
 
-                // Our x values are always the same.  Treat them as ordinal and hard code them here
-                this.chart.x = d3.scale.ordinal()
-                    .domain([0, 10, 25, 50, 100])
-                    .rangePoints([0, this.chart.position.width]);
+                this.countryNames = [];
+                for (var country in this.data) {
+                    this.countryNames.push(country);
+                }
 
-                // The x-axis for the bar chart is also ordinal with two values
-                this.chart.barx = d3.scale.ordinal()
-                    .domain(["Present", "Reef Loss"])
-                    .rangeRoundBands([0, this.chart.position.width], 0.15);
+                var countrydata = Object.keys(this.data).map(function(a) {
+                    var country = {};
+                    country[a] = self.data[a];
+                    return country;
+                });
+
+                this.chart.x = d3.scale.ordinal()
+                    .domain(this.countryNames)
+                    .rangeBands([0, this.chart.position.width], 0.7, 0.3);
 
                 this.chart.y = d3.scale.linear()
+                    .domain([0, 1]) // TODO: Max and Min of whichever stat
                     .range([this.chart.position.height-20,0]);
 
                 this.chart.xAxis = d3.svg.axis()
                     .scale(this.chart.x)
                     .orient("bottom");
 
-                this.chart.barxAxis = d3.svg.axis()
-                    .scale(this.chart.barx)
-                    .orient("bottom");
-
                 this.chart.yAxis = d3.svg.axis()
                     .scale(this.chart.y)
-                    .orient("left").ticks(5);
+                    .orient("left");
 
-                this.chart.area = {};
-                this.chart.area.current = d3.svg.area()
-                    .x(function(d) { return self.chart.x(d.x); })
-                    .y0(this.chart.position.height - 20)
-                    .y1(function(d) { return self.chart.y(d.y); });
-
-                this.chart.area.scenario = d3.svg.area()
-                    .x(function(d) { return self.chart.x(d.x); })
-                    .y0(this.chart.position.height - 20)
-                    .y1(function(d) { return self.chart.y(d.y); });
-
-                this.chart.valueline = d3.svg.line()
-                    .x(function(d) { return self.chart.x(d.x); })
-                    .y(function(d) { return self.chart.y(d.y); });
-                
                 var $chartContainer = this.$el.find(".chartContainer");
 
                 this.chart.svg = d3.selectAll($chartContainer.toArray())
@@ -345,34 +290,20 @@ define([
                     .append("g")
                         .attr("transform", "translate(" + this.chart.position.margin.left + "," + this.chart.position.margin.right + ")");
 
-                // Add a chart background object that can be styled separately
-                this.chart.svg.append("rect")
-                    .attr("class", "chart-area")
-                    .attr("width", this.chart.position.width)
-                    .attr("height", this.chart.position.height - 20)
-                    .attr("fill", "#f6f6f6");
-
                 // Add the xaxis
                 this.chart.svg.append("g")
-                    .attr("opacity", 0)
                     .attr("class", "xaxis")
                     .attr("transform", "translate(0," + (this.chart.position.height-20) + ")")
-                    .call(this.chart.xAxis);
+                    .call(this.chart.xAxis)
+                    .selectAll("text")
+                        .attr("transform", "rotate(-45)")
+                        .style("text-anchor", "end")
+                    .selectAll(".tick")
+                        .attr("transform", "translate(0,25)")
 
-                // Add the xaxis for the bar chart
                 this.chart.svg.append("g")
-                    .attr("opacity", 1)
-                    .attr("class", "barxaxis")
-                    .attr("transform", "translate(0," + (this.chart.position.height-20) + ")")
-                    .call(this.chart.barxAxis);
-
-                // Add the x-axis label
-                this.chart.svg.append("text")
-                    .attr("class", "xaxis-label")
-                    .attr("opacity", 0)
-                    .attr("text-anchor", "middle")
-                    .attr("transform", "translate(" + (this.chart.position.width / 2) + "," + (this.chart.position.height + 20) + ")")
-                    .text("Storm Return Period");
+                    .attr("class", "yaxis")
+                    .call(this.chart.yAxis);
 
                 // Add the y-axis label
                 this.chart.svg.append("text")
@@ -381,178 +312,118 @@ define([
                     .attr("y", 0 - this.chart.position.margin.left + 20)
                     .attr("x", 0 - (this.chart.position.height / 2))
                     .attr("text-anchor", "middle")
-                    .text("People at Risk (No.)");
+                    .text("STAT TEXT");
+               
 
-                this.chart.svg.append("g")
-                    .attr("class", "yaxis")
-                    .call(this.chart.yAxis);
+                this.chart.chartData = this.chart.svg.append("g")
+                    .attr("class", "chart-data")
+                    .attr("transform", "translate(0,0)");
 
-                // Add chart legend
-                this.chart.legend = this.chart.svg.append("g")
-                    .attr("class", "chart-legend")
-                    .attr("opacity", 0);
+                this.chart.plots = this.chart.chartData.selectAll(".box")
+                    .data(this.countryNames)
+                    .enter().append('g')
+                    .attr('data-country', function(d) {
+                        return d;
+                    })
+                    .attr('class', 'box');
 
-                    this.chart.legend.append("rect")
-                        .attr("width", "25")
-                        .attr("height", "15")
-                        .attr("x", "5")
-                        .attr("fill", "#30928D");
+                // whiskers
+                this.chart.whiskers = this.chart.plots.append("line")
+                    .attr("class", "whisker")
+                    .attr("stroke-width", 1)
+                    .attr("stroke", "black")
+                    .attr("stroke-dasharray", "3,3")
+                    .attr("x1", function(d) {
+                        return self.chart.x(d) + ((self.chart.position.width/self.countryNames.length) * 0.4);
+                    })
+                    .attr("x2", function(d) {
+                        return self.chart.x(d) + ((self.chart.position.width/self.countryNames.length) * 0.4);
+                    })
+                    .attr("y1", function(d) {
+                        return self.chart.y(self.data[d][self.stat].max);
+                    })
+                    .attr("y2", function(d) {
+                        return self.chart.y(self.data[d][self.stat].min);
+                    });
 
-                    this.chart.legend.append("text")
-                        .text("Present")
-                        .attr("x", "32")
-                        .attr("y", "11");
-                    
-                    this.chart.legend.append("rect")
-                        .attr("width", "25")
-                        .attr("height", "15")
-                        .attr("x", "5")
-                        .attr("y", "18")
-                        .attr("fill", "#923034");
+                // Max lines
+                this.chart.maxline = this.chart.plots.append("line")
+                    .attr("class", "maxline")
+                    .attr("stroke-width", 1)
+                    .attr("stroke", "black")
+                    .attr("x1", function (d) {
+                        return self.chart.x(d);
+                    })
+                    .attr("x2", function (d) {
+                        return self.chart.x(d) + ((self.chart.position.width/self.countryNames.length) * 0.8) ;
+                    })
+                    .attr("y1", function(d) {
+                        return self.chart.y(self.data[d][self.stat].max);
+                    })
+                    .attr("y2", function(d) {
+                        return self.chart.y(self.data[d][self.stat].max);
+                    });
 
-                    this.chart.legend.append("text")
-                        .text("Reef Loss")
-                        .attr("x", "32")
-                        .attr("y", "29");
+                // Min lines
+                this.chart.minline = this.chart.plots.append("line")
+                    .attr("class", "minline")
+                    .attr("stroke-width", 1)
+                    .attr("stroke", "black")
+                    .attr("x1", function (d) {
+                        return self.chart.x(d);
+                    })
+                    .attr("x2", function (d) {
+                        return self.chart.x(d) + ((self.chart.position.width/self.countryNames.length) * 0.8);
+                    })
+                    .attr("y1", function(d) {
+                        return self.chart.y(self.data[d][self.stat].min);
+                    })
+                    .attr("y2", function(d) {
+                        return self.chart.y(self.data[d][self.stat].min);
+                    });
 
-                // Initialize chart data 
-                this.addChartPoints();
-
-
-            },
-
-            // Initialize the chart points with empty values
-            addChartPoints: function() {
-                var self = this;
-                this.chart.data = {};
-                this.chart.data.current = {};
-                this.chart.data.current.x = [0,10,25,50,100];
-                this.chart.data.current.barx = ["Present", "Reef Loss"];
-                this.chart.data.current.y = [0,0,0,0,0];
-                this.chart.data.current.xy = [];
-
-                this.chart.data.scenario = {};
-                this.chart.data.scenario.x = [0,10,25,50,100];
-                this.chart.data.scenario.barx = ["Present", "Reem Loss"];
-                this.chart.data.scenario.y = [0,0,0,0,0];
-                this.chart.data.scenario.xy = [];
-
-                // Create an array of xy point data for the current scenario
-                for (var i=0; i<this.chart.data.current.x.length; i++) {
-                    this.chart.data.current.xy.push(
-                        {
-                            x: this.chart.data.current.x[i], 
-                            y: this.chart.data.current.y[i]
+                  // Boxes
+                this.chart.box = this.chart.plots.append("rect")
+                    .attr("y", function(d) {
+                        return self.chart.y(self.data[d][self.stat].q75);
+                    })
+                    .attr("height", function(d) {
+                        return self.chart.y(self.data[d][self.stat].q25) - self.chart.y(self.data[d][self.stat].q75);
+                    })
+                    .attr("x", function(d) {
+                        return self.chart.x(d);
+                    })
+                    .attr("fill", function(d) {
+                        if (d === self.region) {
+                            return "steelblue";
+                        } else {
+                            return "olivedrab";
                         }
-                    );
-                }
-
-                // Create an array of xy point data for the 1m loss scenario
-                for (var j=0; j<this.chart.data.scenario.x.length; j++) {
-                    this.chart.data.scenario.xy.push(
-                        {
-                            x: this.chart.data.scenario.x[j],
-                            y: this.chart.data.scenario.y[j]
-                        }
-                    );
-                }
-
-                // Attach the 1m loss data
-                this.chart.svg
-                    .data([this.chart.data.scenario.xy])
-                    .append("path")
-                    .attr("opacity", 0)
-                    .attr("class", "area-scenario")
-                    .attr("d", this.chart.area.scenario);
-
-                // Attach the current scenario data
-                this.chart.svg
-                    .data([this.chart.data.current.xy])
-                    .append("path")
-                    .attr("opacity", 0)
-                    .attr("class", "area-current")
-                    .attr("d", this.chart.area.current);
-
-                // Create an interpolation line between points
-                this.chart.svg
-                    .append("path")
-                    .attr("class", "line current")
-                    .attr("opacity", 0)
-                    .attr("d", this.chart.valueline(this.chart.data.current.xy));
-
-                this.chart.pointscurrent = this.chart.svg.append("g")
-                    .attr("class", "points-current");
-
-                // Add circles for each current scenario point and show value on mouseover
-                this.chart.pointscurrent.selectAll('circle')
-                    .data(this.chart.data.current.xy)
-                    .enter().append('circle')
-                    .attr("opacity", 0)
-                    .attr("cx", function(d) { return self.chart.x(d.x); })
-                    .attr("cy", function(d) { return self.chart.y(d.y); })
-                    .attr("r", 3.5)
-                    .on("mouseover", function(e) {
-                        self.showGraphTooltip(e, self);
                     })
-                    .on("mousemove", function(d) {
-                        self.moveGraphTooltip(d, this, self);
+                    .attr("width", (self.chart.position.width/self.countryNames.length) - ((self.chart.position.width/self.countryNames.length) * 0.2)) // 20% gap
+                    .attr("cursor", "pointer")
+                    .on("click", function(d) {
+                        self.$el.find(".region-select").val(d);
+                        self.changeRegion();
                     })
-                    .on("mouseout", function() {
-                        self.hideTooltip(self);
-                    });
 
-                this.chart.svg
-                    .append("path")
-                    .attr("opacity", 0)
-                    .attr("class", "line scenario")
-                    .attr("d", this.chart.valueline(this.chart.data.scenario.xy));
-
-                this.chart.pointsscenario = this.chart.svg.append("g")
-                    .attr("class", "points-scenario");
-
-                // Add circles for each 1m loss scenario point and show value on mouseover
-                this.chart.pointsscenario.selectAll('circle')
-                    .data(this.chart.data.scenario.xy)
-                    .enter().append('circle')
-                    .attr("opacity", 0)
-                    .attr("cx", function(d) { return self.chart.x(d.x); })
-                    .attr("cy", function(d) { return self.chart.y(d.y); })
-                    .attr("r", 3.5)
-                    .on("mouseover", function(e) {
-                        self.showGraphTooltip(e, self);
+                // median lines
+                this.medianline = this.chart.plots.append("line")
+                    .attr("class", "median")
+                    .attr("x1", function (d) {
+                        return self.chart.x(d);
                     })
-                    .on("mousemove", function(d) {
-                        self.moveGraphTooltip(d, this, self);
+                    .attr("x2", function (d) {
+                        return self.chart.x(d) + ((self.chart.position.width/self.countryNames.length) * 0.8);
                     })
-                    .on("mouseout", function() {
-                        self.hideTooltip(self);
-                    });
-
-                // Bar chart
-                var bardata = [
-                    {x: "Present", y: 0},
-                    {x: "Reef Loss", y: 0}
-                ];
-
-                this.chart.svg.selectAll(".bar")
-                    .data(bardata)
-                    .enter().append("rect")
-                    .attr("opacity", 0)
-                    .attr("class", "bar")
-                    .attr("x", function(d) { return self.chart.barx(d.x); })
-                    .attr("width", 30)
-                    .attr("y", function(d) { return self.chart.y(d.y); })
-                    .on("mouseover", function(e) {
-                        self.showGraphTooltip(e, self);
+                    .attr("y1", function(d) {
+                        return self.chart.y(self.data[d][self.stat].median);
                     })
-                    .on("mousemove", function(d) {
-                        self.moveGraphTooltip(d, this, self);
+                    .attr("y2", function(d) {
+                        return self.chart.y(self.data[d][self.stat].median);
                     })
-                    .on("mouseout", function() {
-                        self.hideTooltip(self);
-                    });
-
-                //this.updateChart();
+                    .attr("stroke-width", 1)
+                    .attr("stroke", "black");
 
             },
 
@@ -560,19 +431,94 @@ define([
             updateChart: function() {
                 var self = this;
 
-                // Built Capital should be divided by 1 million
-                var division = 1;
-                if (this.variable === "BCF") {
-                    division = 1000000;
-                }
+                var min = _.min(this.data, function(d) {
+                    return d[self.stat].min;
+                })[self.stat].min;
 
-                var annual = false;
-                if(this.period === "ANN") {
-                    annual = true;
-                }
+                var maxArray = [];
+                _.each(this.data, function(d) {
+                    maxArray.push(parseFloat(d[self.stat].max))
+                })
+
+                var minArray = [];
+                _.each(this.data, function(d) {
+                    minArray.push(parseFloat(d[self.stat].min))
+                })
+
+                this.chart.y
+                    .domain([d3.min(minArray), d3.max(maxArray)]) // TODO: Max and Min of whichever stat
+
+                this.chart.svg.selectAll(".yaxis")
+                    .transition().duration(1000)
+                    .call(this.chart.yAxis)
+
+                // Boxes
+                this.chart.box = this.chart.plots.selectAll("rect")
+                    .transition().duration(1000)
+                    .attr("y", function(d) {
+                        return self.chart.y(self.data[d][self.stat].q75);
+                    })
+                    .attr("height", function(d) {
+                        return self.chart.y(self.data[d][self.stat].q25) - self.chart.y(self.data[d][self.stat].q75);
+                    })
+                    .attr("fill", function(d) {
+                        if (d === self.region) {
+                            return "steelblue";
+                        } else {
+                            return "olivedrab";
+                        }
+                    })
+                
+                // Whiskers
+                this.chart.whiskers
+                    .transition().duration(1000)
+                    .attr("x1", function(d) {
+                        return self.chart.x(d) + ((self.chart.position.width/self.countryNames.length) * 0.4);
+                    })
+                    .attr("x2", function(d) {
+                        return self.chart.x(d) + ((self.chart.position.width/self.countryNames.length) * 0.4);
+                    })
+                    .attr("y1", function(d) {
+                        return self.chart.y(self.data[d][self.stat].max);
+                    })
+                    .attr("y2", function(d) {
+                        return self.chart.y(self.data[d][self.stat].min);
+                    });
+
+                // Max lines
+                this.chart.maxline
+                    .transition().duration(1000)
+                    .attr("y1", function(d) {
+                        return self.chart.y(self.data[d][self.stat].max);
+                    })
+                    .attr("y2", function(d) {
+                        return self.chart.y(self.data[d][self.stat].max);
+                    });
+
+                // Min lines
+                this.chart.minline
+                    .transition().duration(1000)
+                    .attr("y1", function(d) {
+                        return self.chart.y(self.data[d][self.stat].min);
+                    })
+                    .attr("y2", function(d) {
+                        return self.chart.y(self.data[d][self.stat].min);
+                    });
+
+                // Median Lines
+                this.medianline
+                    .transition().duration(1000)
+                    .attr("y1", function(d) {
+                        return self.chart.y(self.data[d][self.stat].median);
+                    })
+                    .attr("y2", function(d) {
+                        return self.chart.y(self.data[d][self.stat].median);
+                    });
+
+
 
                 // Update the  y-axis label to match the current variable selected
-                var text = "";
+               /* var text = "";
                 if (this.variable === "BCF") {
                     text = "Built Capital at Risk ($Millions)";
                 } else if (this.variable === "PF") {
@@ -580,8 +526,9 @@ define([
                 } else if (this.variable === "AF") {
                     text = "Area at Risk (sq km)";
                 }
+                */
 
-                this.chart.svg.select(".yaxis-label")
+               /* this.chart.svg.select(".yaxis-label")
                         .transition().duration(600)
                         .style("opacity", 0)
                         .transition().duration(600)
@@ -766,6 +713,7 @@ define([
                     .attr("x", function(d) { return self.chart.barx(d.x); })
                     .attr("y", function(d) { return self.chart.y(d.y); })
                     .attr("height", function(d) { return self.chart.position.height - 20 - self.chart.y(d.y); });
+                */
             },
 
             // Create a renderer for the coastal protection layer using the custom defined classbreaks and colors for each
