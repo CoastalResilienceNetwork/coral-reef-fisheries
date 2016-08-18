@@ -294,6 +294,14 @@ define([
 
                 this.chart.xAxis = d3.svg.axis()
                     .scale(this.chart.x)
+                    .tickFormat(function(d) {
+                        console.log(d)
+                        if (self.countryConfig[d].label) {
+                            return self.countryConfig[d].label;
+                        } else {
+                            return d;
+                        }
+                    })
                     .orient("bottom");
 
                 this.chart.yAxis = d3.svg.axis()
