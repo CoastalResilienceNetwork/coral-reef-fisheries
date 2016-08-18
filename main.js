@@ -228,6 +228,8 @@ define([
 
                 this.fisheriesLayer.setVisibleLayers([this.layerIDX]);
 
+
+
                 this.updateChart();
                 
             },
@@ -503,7 +505,7 @@ define([
                     .domain([d3.min(minArray), d3.max(maxArray)]); // TODO: Max and Min of whichever stat
 
                 this.yAxisLabel
-                    .text(this.$el.find(".stat.active .description").text());
+                    .text(this.$el.find(".stat.active .description").text() + "(" + this.data[this.region][this.layer].unit + ")");
 
                 this.chart.svg.selectAll(".yaxis")
                     .transition().duration(1000)
