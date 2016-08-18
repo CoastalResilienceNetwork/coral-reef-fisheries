@@ -544,17 +544,6 @@ define([
                     });
 
 
-
-                // Update the  y-axis label to match the current variable selected
-               /* var text = "";
-                if (this.variable === "BCF") {
-                    text = "Built Capital at Risk ($Millions)";
-                } else if (this.variable === "PF") {
-                    text = "People at Risk (No.)";
-                } else if (this.variable === "AF") {
-                    text = "Area at Risk (sq km)";
-                }
-                */
             },
 
             // Download the pdf report for the current region
