@@ -66,7 +66,7 @@ define([
                 this.$el = $(this.container);
 
                 // Default Settings
-                this.stat = "Biomass_Ratio_M11";
+                this.layer = "Biomass_Ratio_M11";
                 this.region = "Micronesia";
                 this.layerIDX = 3;
 
@@ -80,7 +80,7 @@ define([
                     left: 60,
                     bottom: 50
                 };
-                this.chart.position.width = (this.width - 10)- this.chart.position.margin.left - this.chart.position.margin.right;
+                this.chart.position.width = (this.width - 30)- this.chart.position.margin.left - this.chart.position.margin.right;
                 this.chart.position.height = 255  - this.chart.position.margin.top - this.chart.position.margin.bottom;
               
             },
@@ -90,7 +90,9 @@ define([
 
                 // Set event listeners.  We bind "this" where needed so the event handler can access the full
                 // scope of the plugin
+                this.$el.on("mousedown", ".region-select", $.proxy(this.updateRegionText, this));
                 this.$el.on("change", ".region-select", $.proxy(this.changeRegion, this));
+
                 this.$el.on("click", ".stat", function(e) {self.changeScenarioClick(e);});
 
                 this.$el.on("mouseenter", ".info-tooltip", function(e) {self.showTooltip(e);});
@@ -98,6 +100,7 @@ define([
                 this.$el.on("mousemove", ".info-tooltip", function(e) {self.moveTooltip(e);});
 
                 this.$el.on("click", ".js-getSnapshot", $.proxy(this.printReport, this));
+
 
             },
 
@@ -145,12 +148,28 @@ define([
             numberWithCommas: function (number) {
                 return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
             },
+            
+            // We have some long labels that have shorter abbreviations.  This function resets all
+            // the options to their long text versions.  This should fire everytime the select
+            // list is about to open
+            updateRegionText: function (e) {
+                this.$el.find(".region-select option").each(function(idx, el) {
+                    $(el).text($(el).data("text"));
+                });
+            },
 
             // Change the default region.  If global, zoom to the full extent and show data for all countries.  If regional,
             // zoom to the country based on the bookmark in the extent-bookmarks.json file and hide data for all other countries
             changeRegion: function() {
+                var self = this;
                 this.region = this.$el.find(".region-select").val();
 
+                // When selecting a new region, if it has a shorter label, set the text value to that
+                // so it shows the shorter version in the select box.
+                if (self.countryConfig[self.region].label) {
+                    self.$el.find(".region-select option:selected").text(self.countryConfig[self.region].label);
+                }
+                
                 // Show/hide the download country summary button
                 /*if (this.region === "Global") {
                     this.$el.find(".js-getSnapshot").hide();
@@ -198,8 +217,6 @@ define([
                 this.$el.find(".stat.active").removeClass("active");
                 $(".stat[data-layer='" + this.layer + "']").addClass("active");
 
-                this.stat = this.layer
-
                 this.fisheriesLayer.setVisibleLayers([this.layerIDX]);
 
                 this.updateChart();
@@ -207,11 +224,13 @@ define([
             },
 
             // Render the plugin DOM
+
             render: function() {
                 var $el = $(this.pluginTmpl({
                     global: this.data.Micronesia,
                     regions: this.data,
-                    pane: this.app.paneNumber
+                    pane: this.app.paneNumber,
+                    config: this.countryConfig
                 }));
 
                 $(this.container).empty().append($el);
@@ -299,7 +318,7 @@ define([
                         .attr("transform", "rotate(-45)")
                         .style("text-anchor", "end")
                     .selectAll(".tick")
-                        .attr("transform", "translate(0,25)")
+                        .attr("transform", "translate(0,25)");
 
                 this.chart.svg.append("g")
                     .attr("class", "yaxis")
@@ -340,10 +359,10 @@ define([
                         return self.chart.x(d) + ((self.chart.position.width/self.countryNames.length) * 0.4);
                     })
                     .attr("y1", function(d) {
-                        return self.chart.y(self.data[d][self.stat].max);
+                        return self.chart.y(self.data[d][self.layer].max);
                     })
                     .attr("y2", function(d) {
-                        return self.chart.y(self.data[d][self.stat].min);
+                        return self.chart.y(self.data[d][self.layer].min);
                     });
 
                 // Max lines
@@ -358,10 +377,10 @@ define([
                         return self.chart.x(d) + ((self.chart.position.width/self.countryNames.length) * 0.8) ;
                     })
                     .attr("y1", function(d) {
-                        return self.chart.y(self.data[d][self.stat].max);
+                        return self.chart.y(self.data[d][self.layer].max);
                     })
                     .attr("y2", function(d) {
-                        return self.chart.y(self.data[d][self.stat].max);
+                        return self.chart.y(self.data[d][self.layer].max);
                     });
 
                 // Min lines
@@ -376,19 +395,19 @@ define([
                         return self.chart.x(d) + ((self.chart.position.width/self.countryNames.length) * 0.8);
                     })
                     .attr("y1", function(d) {
-                        return self.chart.y(self.data[d][self.stat].min);
+                        return self.chart.y(self.data[d][self.layer].min);
                     })
                     .attr("y2", function(d) {
-                        return self.chart.y(self.data[d][self.stat].min);
+                        return self.chart.y(self.data[d][self.layer].min);
                     });
 
                   // Boxes
                 this.chart.box = this.chart.plots.append("rect")
                     .attr("y", function(d) {
-                        return self.chart.y(self.data[d][self.stat].q75);
+                        return self.chart.y(self.data[d][self.layer].q75);
                     })
                     .attr("height", function(d) {
-                        return self.chart.y(self.data[d][self.stat].q25) - self.chart.y(self.data[d][self.stat].q75);
+                        return self.chart.y(self.data[d][self.layer].q25) - self.chart.y(self.data[d][self.layer].q75);
                     })
                     .attr("x", function(d) {
                         return self.chart.x(d);
@@ -405,7 +424,7 @@ define([
                     .on("click", function(d) {
                         self.$el.find(".region-select").val(d);
                         self.changeRegion();
-                    })
+                    });
 
                 // median lines
                 this.medianline = this.chart.plots.append("line")
@@ -417,10 +436,10 @@ define([
                         return self.chart.x(d) + ((self.chart.position.width/self.countryNames.length) * 0.8);
                     })
                     .attr("y1", function(d) {
-                        return self.chart.y(self.data[d][self.stat].median);
+                        return self.chart.y(self.data[d][self.layer].median);
                     })
                     .attr("y2", function(d) {
-                        return self.chart.y(self.data[d][self.stat].median);
+                        return self.chart.y(self.data[d][self.layer].median);
                     })
                     .attr("stroke-width", 1)
                     .attr("stroke", "black");
@@ -432,34 +451,34 @@ define([
                 var self = this;
 
                 var min = _.min(this.data, function(d) {
-                    return d[self.stat].min;
-                })[self.stat].min;
+                    return d[self.layer].min;
+                })[self.layer].min;
 
                 var maxArray = [];
                 _.each(this.data, function(d) {
-                    maxArray.push(parseFloat(d[self.stat].max))
-                })
+                    maxArray.push(parseFloat(d[self.layer].max));
+                });
 
                 var minArray = [];
                 _.each(this.data, function(d) {
-                    minArray.push(parseFloat(d[self.stat].min))
-                })
+                    minArray.push(parseFloat(d[self.layer].min));
+                });
 
                 this.chart.y
-                    .domain([d3.min(minArray), d3.max(maxArray)]) // TODO: Max and Min of whichever stat
+                    .domain([d3.min(minArray), d3.max(maxArray)]); // TODO: Max and Min of whichever stat
 
                 this.chart.svg.selectAll(".yaxis")
                     .transition().duration(1000)
-                    .call(this.chart.yAxis)
+                    .call(this.chart.yAxis);
 
                 // Boxes
                 this.chart.box = this.chart.plots.selectAll("rect")
                     .transition().duration(1000)
                     .attr("y", function(d) {
-                        return self.chart.y(self.data[d][self.stat].q75);
+                        return self.chart.y(self.data[d][self.layer].q75);
                     })
                     .attr("height", function(d) {
-                        return self.chart.y(self.data[d][self.stat].q25) - self.chart.y(self.data[d][self.stat].q75);
+                        return self.chart.y(self.data[d][self.layer].q25) - self.chart.y(self.data[d][self.layer].q75);
                     })
                     .attr("fill", function(d) {
                         if (d === self.region) {
@@ -467,7 +486,7 @@ define([
                         } else {
                             return "olivedrab";
                         }
-                    })
+                    });
                 
                 // Whiskers
                 this.chart.whiskers
@@ -479,40 +498,40 @@ define([
                         return self.chart.x(d) + ((self.chart.position.width/self.countryNames.length) * 0.4);
                     })
                     .attr("y1", function(d) {
-                        return self.chart.y(self.data[d][self.stat].max);
+                        return self.chart.y(self.data[d][self.layer].max);
                     })
                     .attr("y2", function(d) {
-                        return self.chart.y(self.data[d][self.stat].min);
+                        return self.chart.y(self.data[d][self.layer].min);
                     });
 
                 // Max lines
                 this.chart.maxline
                     .transition().duration(1000)
                     .attr("y1", function(d) {
-                        return self.chart.y(self.data[d][self.stat].max);
+                        return self.chart.y(self.data[d][self.layer].max);
                     })
                     .attr("y2", function(d) {
-                        return self.chart.y(self.data[d][self.stat].max);
+                        return self.chart.y(self.data[d][self.layer].max);
                     });
 
                 // Min lines
                 this.chart.minline
                     .transition().duration(1000)
                     .attr("y1", function(d) {
-                        return self.chart.y(self.data[d][self.stat].min);
+                        return self.chart.y(self.data[d][self.layer].min);
                     })
                     .attr("y2", function(d) {
-                        return self.chart.y(self.data[d][self.stat].min);
+                        return self.chart.y(self.data[d][self.layer].min);
                     });
 
                 // Median Lines
                 this.medianline
                     .transition().duration(1000)
                     .attr("y1", function(d) {
-                        return self.chart.y(self.data[d][self.stat].median);
+                        return self.chart.y(self.data[d][self.layer].median);
                     })
                     .attr("y2", function(d) {
-                        return self.chart.y(self.data[d][self.stat].median);
+                        return self.chart.y(self.data[d][self.layer].median);
                     });
 
 

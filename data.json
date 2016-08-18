@@ -93,7 +93,7 @@
             "unit": "g/m2"
         }
     }, 
-    "FSM": {
+    "Federated States of Micronesia (FSM)": {
         "Biomass_Ratio_M11": {
             "max": "1", 
             "mean": "0.79", 
@@ -281,7 +281,7 @@
             "unit": "g/m2"
         }
     }, 
-    "CNMI": {
+    "Northern Mariana Isl. (CNMI)": {
         "Biomass_Ratio_M11": {
             "max": "1", 
             "mean": "0.61", 
