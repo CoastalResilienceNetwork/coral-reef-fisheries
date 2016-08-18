@@ -57,6 +57,13 @@ define([
             showServiceLayersInLegend: true, // Disable the default legend item which doesn't pick up our custom class breaks
             allowIdentifyWhenActive: false,
 
+            unitStyleLookups: {
+                "%": "%",
+                "g/m2": "g/m<sup>2</sup>",
+                "0-1": "",
+                "Years": "Years"
+            },
+
             initialize: function(frameworkParameters, currentRegion) {
                 declare.safeMixin(this, frameworkParameters);
                 this.data = $.parseJSON(Data);
@@ -226,7 +233,8 @@ define([
                     global: this.data.Micronesia,
                     regions: this.data,
                     pane: this.app.paneNumber,
-                    config: this.countryConfig
+                    config: this.countryConfig,
+                    units: this.unitStyleLookups
                 }));
 
                 $(this.container).empty().append($el);
