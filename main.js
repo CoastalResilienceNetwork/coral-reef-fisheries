@@ -78,7 +78,7 @@ define([
                     top: 30,
                     right: 30,
                     left: 60,
-                    bottom: 50
+                    bottom: 40
                 };
                 this.chart.position.width = (this.width - 30)- this.chart.position.margin.left - this.chart.position.margin.right;
                 this.chart.position.height = 255  - this.chart.position.margin.top - this.chart.position.margin.bottom;
@@ -295,7 +295,6 @@ define([
                 this.chart.xAxis = d3.svg.axis()
                     .scale(this.chart.x)
                     .tickFormat(function(d) {
-                        console.log(d)
                         if (self.countryConfig[d].label) {
                             return self.countryConfig[d].label;
                         } else {
@@ -333,13 +332,12 @@ define([
                     .call(this.chart.yAxis);
 
                 // Add the y-axis label
-                this.chart.svg.append("text")
+                this.yAxisLabel = this.chart.svg.append("text")
                     .attr("class", "yaxis-label")
                     .attr("transform", "rotate(-90)")
                     .attr("y", 0 - this.chart.position.margin.left + 20)
                     .attr("x", 0 - (this.chart.position.height / 2))
-                    .attr("text-anchor", "middle")
-                    .text("STAT TEXT");
+                    .attr("text-anchor", "middle");
                
 
                 this.chart.chartData = this.chart.svg.append("g")
@@ -474,6 +472,9 @@ define([
 
                 this.chart.y
                     .domain([d3.min(minArray), d3.max(maxArray)]); // TODO: Max and Min of whichever stat
+
+                this.yAxisLabel
+                    .text(this.$el.find(".stat.active .description").text());
 
                 this.chart.svg.selectAll(".yaxis")
                     .transition().duration(1000)
