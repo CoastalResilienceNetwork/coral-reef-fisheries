@@ -177,17 +177,10 @@ define([
                     self.$el.find(".region-select option:selected").text(self.countryConfig[self.region].label);
                 }
 
+                this.setLayerDefinitions();
+
                 var regionExtent = this.countryConfig[this.region].EXTENT;
                 var extent = new esri.geometry.Extent(regionExtent[0],regionExtent[1],regionExtent[2],regionExtent[3]);
-
-                if (this.region === "Micronesia" ) {
-                    this.fisheriesLayer.setLayerDefinitions([]);
-                } else {
-                    var layerDefs = [];
-                    var params = this.countryConfig[this.region].query;
-                    layerDefs[this.layerIDX] = params.type + "='" + params.label + "'";
-                    this.fisheriesLayer.setLayerDefinitions(layerDefs);
-                }    
                 
                 this.map.setExtent(extent);
 
@@ -207,10 +200,23 @@ define([
 
             },
 
+            setLayerDefinitions: function() {
+                if (this.region === "Micronesia" ) {
+                    this.fisheriesLayer.setLayerDefinitions([]);
+                } else {
+                    var layerDefs = [];
+                    var params = this.countryConfig[this.region].query;
+                    layerDefs[this.layerIDX] = params.type + "='" + params.label + "'";
+                    this.fisheriesLayer.setLayerDefinitions(layerDefs);
+                }  
+            },
+
             // Capture the click from the fact number click events and pass to the changeScenario function
             changeScenarioClick: function(e) {
                 this.layer = $(e.currentTarget).closest(".stat").data("layer");
                 this.layerIDX = $(e.currentTarget).closest(".stat").data("layer-idx");
+
+                this.setLayerDefinitions();
                 
                 this.changeScenario();
             },
