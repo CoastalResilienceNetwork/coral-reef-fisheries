@@ -557,22 +557,6 @@ define([
                 */
             },
 
-            // Create a renderer for the coastal protection layer using the custom defined classbreaks and colors for each
-            // scenario and fact combination
-            createRenderer: function(classBreaks, field) {
-                var defaultSymbol = new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID, new Color([0,0,0,0]), 0);
-                var renderer = new ClassBreaksRenderer(defaultSymbol, field);
-                _(classBreaks).each(function(classBreak) {
-                    renderer.addBreak({
-                        minValue: classBreak[0], 
-                        maxValue: classBreak[1], 
-                        symbol: SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID, new Color(classBreak[2]), classBreak[4]),
-                        label: classBreak[3]
-                    });
-                });
-                return renderer;
-            },
-
             // Download the pdf report for the current region
             printReport: function() {
                 window.open(this.countryConfig[this.region].SNAPSHOT, '_blank'); 
