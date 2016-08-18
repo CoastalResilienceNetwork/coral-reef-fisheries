@@ -243,7 +243,14 @@ define([
            
             // Show graph tooltip on hover
             showGraphTooltip: function(d, self) {
-                self.$el.find(".ncp-tooltip").html(parseInt(d.y).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")).css({width: "auto"}).show();
+                var html = "";
+                html += "max: " + self.data[d][self.layer].max
+                html += "\nthird quartile: " + self.data[d][self.layer].q75
+                html += "\nmedian: " + self.data[d][self.layer].median
+                html += "\nsecond quartile: " + self.data[d][self.layer].q25
+                html += "\nmin: " + self.data[d][self.layer].min
+
+                self.$el.find(".plugin-tooltip").html(html).show();
             },
 
             // Track graph tooltip to mouse movement
@@ -251,18 +258,18 @@ define([
                 var offset = this.$el.offset();
                 var x = d3.event.pageX - offset.left;
                 var y = d3.event.pageY - offset.top;
-                this.$el.find(".ncp-tooltip").css({left: x + 5, top: y});
+                this.$el.find(".plugin-tooltip").css({left: x + 5, top: y});
             },
 
             // Show info tooltip on mouse hover
             showTooltip: function(e) {
                 var text = $(e.currentTarget).data("tooltip");
-                this.$el.find(".ncp-tooltip").html(text).css({width: "240"}).show();
+                this.$el.find(".plugin-tooltip").html(text).css({width: "240"}).show();
             },
 
             // Hide graph and info tooltip on mouseout
             hideTooltip: function() {
-                this.$el.find(".ncp-tooltip").empty().hide();
+                this.$el.find(".plugin-tooltip").empty().hide();
             },
 
             // Track info tooltip to mouse movement
@@ -270,7 +277,7 @@ define([
                 var offset = this.$el.offset();
                 var x = e.pageX - offset.left;
                 var y = e.pageY - offset.top;
-                this.$el.find(".ncp-tooltip").css({left: x + 5, top: y});
+                this.$el.find(".plugin-tooltip").css({left: x + 5, top: y});
             },
 
             // Render the D3 Chart
@@ -323,13 +330,16 @@ define([
                 // Add the xaxis
                 this.chart.svg.append("g")
                     .attr("class", "xaxis")
-                    .attr("transform", "translate(0," + (this.chart.position.height-20) + ")")
+                    .attr("transform", "translate(0," + (this.chart.position.height-15) + ")")
                     .call(this.chart.xAxis)
-                    .selectAll("text")
+                    .selectAll("line")
+                        .attr("x1", 8)
+                        .attr("x2", 8); //TODO: Dynamically figure out half-way point
+
+                this.chart.svg.selectAll(".xaxis text")
                         .attr("transform", "rotate(-45)")
                         .style("text-anchor", "end")
-                    .selectAll(".tick")
-                        .attr("transform", "translate(0,25)");
+                    ;
 
                 this.chart.svg.append("g")
                     .attr("class", "yaxis")
@@ -354,7 +364,16 @@ define([
                     .attr('data-country', function(d) {
                         return d;
                     })
-                    .attr('class', 'box');
+                    .attr('class', 'box')
+                    .on("mouseover", function(e) {
+                        self.showGraphTooltip(e, self);
+                    })
+                    .on("mousemove", function(e) {
+                        self.moveGraphTooltip(e, self);
+                    })
+                    .on("mouseout", function(e) {
+                        self.hideTooltip();
+                    });
 
                 // whiskers
                 this.chart.whiskers = this.chart.plots.append("line")
@@ -546,8 +565,6 @@ define([
                     .attr("y2", function(d) {
                         return self.chart.y(self.data[d][self.layer].median);
                     });
-
-
             },
 
             // Download the pdf report for the current region
