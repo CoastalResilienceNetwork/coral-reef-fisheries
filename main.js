@@ -53,7 +53,7 @@ define([
 			//infoGraphic: "plugins/natural_coastal_protection/coastalprotection.jpg",
             resizable: true,
             width: 425,
-            height: 740,
+            height: 755,
             showServiceLayersInLegend: true, // Disable the default legend item which doesn't pick up our custom class breaks
             allowIdentifyWhenActive: false,
 
@@ -88,7 +88,7 @@ define([
                     bottom: 40
                 };
                 this.chart.position.width = (this.width - 30)- this.chart.position.margin.left - this.chart.position.margin.right;
-                this.chart.position.height = 255  - this.chart.position.margin.top - this.chart.position.margin.bottom;
+                this.chart.position.height = 245  - this.chart.position.margin.top - this.chart.position.margin.bottom;
               
             },
 
@@ -227,8 +227,6 @@ define([
                 $(".stat[data-layer='" + this.layer + "']").addClass("active");
 
                 this.fisheriesLayer.setVisibleLayers([this.layerIDX]);
-
-
 
                 this.updateChart();
                 

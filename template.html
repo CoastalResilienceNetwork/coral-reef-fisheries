@@ -19,25 +19,38 @@
 	.micronesia-plugin .title {
 	    margin: 6px 3px;
 		font-weight: bold;
-	    font-size: 22px;
+	    font-size: 18px;
 	    text-align: center;
 	}
 
 	.micronesia-plugin .main-message {
 		margin: 4px;
-		font-size: 16px;
+		font-size: 13px;
+		line-height: 17px;
+		text-align: center;
+		font-weight: bold;
 	}
 
 	.micronesia-plugin .controls-container {
 		position: relative;
 		padding: 10px 8px;
-		background-color: #f3f4f3;
-		min-height: 90px;
+		background-color: #efefef;
+		min-height: 45px;
 		text-align: center;
 	}
 
+	.micronesia-plugin .control-title {
+		position: absolute;
+    	left: 8px;
+		font-size: 12px;
+	}
+
+
 	.micronesia-plugin .region-select-container {
-		display: inline-block;
+		position: absolute;
+	    left: 0;
+	    top: 0;
+	    background-color: #f3f4f3;
 	}
 
 	.micronesia-plugin .info-tooltip {
@@ -52,14 +65,12 @@
 	}
 
 	.micronesia-plugin .styled-select {
-		position: relative;
-		display: inline-block;
+		position: absolute;
+		left 0;
+		top: 9px;
 		width: 125px;
 		height: 36px;
 		overflow: hidden;
-		border: 2px solid #aaaaaa;
-		border-radius: 4px;
-		background-color: #fff;
 		cursor: pointer;
 		margin-right: 5px;
 	}
@@ -78,11 +89,10 @@
 	.micronesia-plugin .styled-select select {
 		background: transparent;
 		width: 125px;
-		padding: 5px;
-		font-size: 16px;
-		border: 0;
-		border-radius: 0;
-		color: #333333;
+		font-size: 19px;
+		font-weight: bold;
+		border: none;
+		color: #000;
 		height: 32px;
 		-moz-appearance: none;
 		-webkit-appearance: none;
@@ -91,20 +101,23 @@
 	}
 
 	.micronesia-plugin .download-summary {
-		display: inline-block;
-	    margin-right: 6px;
+		position: absolute;
+	    right: 8px;
+	    top: 50%;
+	    margin-top: -17.5px;
+	    height: 35px;
+	    padding: 0;
+	    line-height: 35px;
 	    color: #fff !important;
 	    cursor: pointer;
 	    border: 1px solid #226491;
 	    border-radius: 4px;
-	    padding: 4px;
 	    background-color: #226491;
 	    text-align: center;
 	    box-shadow: 2px 2px 5px 1px rgba(34,100,145, 0.2);
 	    transition: box-shadow 0.2s;
 	    font-size: 16px;
-	    min-height: 36px;
-	    max-width: 115px;
+	    width: 135px;
     }
 
     .micronesia-plugin .download-summary:active {
@@ -126,34 +139,49 @@
 	}
     
     .micronesia-plugin .stats-description {
-    	padding: 8px;
-		font-size: 16px;
-		text-align: left;
+    	padding: 20px 8px;
+	    font-size: 14px;
+	    text-align: left;
+	    line-height: 17px;
+    }
+
+    .micronesia-plugin .chart-description {
+    	padding: 15px 8px;
+	    font-size: 14px;
+	    text-align: left;
+	    line-height: 17px;
     }
 
 	.micronesia-plugin .stats-container {
-		width: 100%;
 		display: table;
+		margin: auto;
 	}
 
 	.micronesia-plugin .stat {
-		min-height: 50px;
-		text-align: center;
+		height: 35px;
+		display: table-row;
 	}
 
-	.micronesia-plugin .stat.active .description,
-	.micronesia-plugin .stat.active .number {
-		color: #226491;
+	.micronesia-plugin .stat .description,
+	.micronesia-plugin .stat .number {
+		display: table-cell;
+		border-bottom: 1px solid #ccc;
+		cursor: pointer;
+		text-align: left;
+		transition: color 0.35s linear;
+	}
+
+	.micronesia-plugin .stat:last-child .description,
+	.micronesia-plugin .stat:last-child .number {
+		border: none;
 	}
 
 	.micronesia-plugin .stat .number {
-		display: inline-block;
-		cursor: pointer;
+		width: 140px;
 		padding-left: 8px;
-		font-size: 45px;
+		font-size: 25px;
 	    font-weight: bold;
 	    color: #d8d8d8;
-	    transition: color 0.35s linear;
 	}
 
 	.micronesia-plugin .stat .units {
@@ -166,13 +194,10 @@
 	}
 
 	.micronesia-plugin .stat .description {
-		cursor: pointer;
-	    display: inline-block;
 	    padding-left: 10px;
 		color: #d8d8d8;
-	    font-size: 19px;
+	    font-size: 14px;
 	    vertical-align: middle;
-	    text-align: left;
 	    transition: color 0.35s linear;
 	}
 
@@ -206,9 +231,13 @@
 		stroke: #333;
 	}
 
-	.micronesia-plugin .xaxis-label,
+	
 	.micronesia-plugin .yaxis-label {
-		font-size: 16px;
+		font-size: 14px;
+	}
+	.micronesia-plugin .xaxis-label {
+		font-size: 12px;
+		direction: ltr;
 	}
 	.micronesia-plugin .xaxis path,
 	.micronesia-plugin .yaxis path {
@@ -219,6 +248,10 @@
 	}
 
 	.micronesia-plugin .region-container{
+		height: 45px;
+	    background-color: #fff;
+	    padding-left: 7px;
+	    width: 134px;
 		text-align: left;
 	}
 
@@ -235,7 +268,7 @@ by helping to identify areas that are most likely to benefit from improved manag
 
 	    	<div class="region-select-container">
 		    		<div class="region-container">
-		    		<span class="control-title">Region:</span><br>
+		    		<span class="control-title">Region:</span>
 		    		<div class="styled-select">
 			    		<select class="region-select">
 			    			<optgroup label="Select Region">
@@ -247,7 +280,7 @@ by helping to identify areas that are most likely to benefit from improved manag
 			    	</div>
 			    </div>
 	    	</div>
-	    	<a class="download-summary snapshot" href="http://ow-maps.coastalresilience.org/Reports/TNC%20final%20technical%20report%20v1.1.pdf" target="_blank">Download Report <i class="fa fa-file-pdf-o" aria-hidden="true"></i></a>
+	    	<a class="download-summary snapshot" href="http://ow-maps.coastalresilience.org/Reports/TNC%20final%20technical%20report%20v1.1.pdf" target="_blank"><i class="fa fa-file-pdf-o" aria-hidden="true"></i>&nbsp;Download Report</a>
 			<!--<a class="download-summary report" href="" target="_blank">Download Policy Brief <i class="fa fa-file-pdf-o" aria-hidden="true"></i></a>-->
 
 	    </div>
@@ -291,7 +324,7 @@ by helping to identify areas that are most likely to benefit from improved manag
 
 	    </div>
 
-	    <div class="stats-description">
+	    <div class="chart-description">
 	    The colored boxes represent where 50% of the data fall. Hover over the chart for more info.</div>
 		<div class="plugin-tooltip"></div>
 	    <div class="chartContainer">
