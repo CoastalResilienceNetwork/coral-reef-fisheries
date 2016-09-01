@@ -53,7 +53,7 @@ define([
 			//infoGraphic: "plugins/natural_coastal_protection/coastalprotection.jpg",
             resizable: true,
             width: 425,
-            height: 755,
+            height: 730,
             showServiceLayersInLegend: true, // Disable the default legend item which doesn't pick up our custom class breaks
             allowIdentifyWhenActive: false,
 
@@ -73,7 +73,7 @@ define([
                 this.$el = $(this.container);
 
                 // Default Settings
-                this.layer = "Biomass_Ratio_M11";
+                this.layer = "Fishing_Pressure_M1";
                 this.region = "Micronesia";
                 this.layerIDX = 3;
 
@@ -186,13 +186,11 @@ define([
 
                 var pressure = this.data[this.region].Fishing_Pressure_M1.mean;
                 var stock = this.data[this.region].Standing_Stock_M2.mean;
-                var biomass = this.data[this.region].Biomass_Ratio_M11.mean;
                 var predicted = this.data[this.region].Percent_Gain_M4.mean;
                 var recovery = this.data[this.region].Recovery_Years_M12.mean;
 
                 this.$el.find(".stat[data-layer='Fishing_Pressure_M1'] .variable").html(pressure);
                 this.$el.find(".stat[data-layer='Standing_Stock_M2'] .variable").html(stock);
-                this.$el.find(".stat[data-layer='Biomass_Ratio_M11'] .variable").html(biomass);
                 this.$el.find(".stat[data-layer='Percent_Gain_M4'] .variable").html(predicted);
                 this.$el.find(".stat[data-layer='Recovery_Years_M12'] .variable").html(recovery);
 
