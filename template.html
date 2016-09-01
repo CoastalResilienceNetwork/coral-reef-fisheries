@@ -100,14 +100,14 @@
 		cursor: pointer;
 	}
 
-	.micronesia-plugin .download-summary {
+	.micronesia-plugin .download-summary,
+	.micronesia-plugin .download-full {
 		position: absolute;
-	    right: 8px;
 	    top: 50%;
 	    margin-top: -17.5px;
 	    height: 35px;
+	    line-height: 16px;
 	    padding: 0;
-	    line-height: 35px;
 	    color: #fff !important;
 	    cursor: pointer;
 	    border: 1px solid #226491;
@@ -116,11 +116,20 @@
 	    text-align: center;
 	    box-shadow: 2px 2px 5px 1px rgba(34,100,145, 0.2);
 	    transition: box-shadow 0.2s;
-	    font-size: 16px;
-	    width: 135px;
+	    font-size: 14px;
+	    width: 125px;
     }
 
-    .micronesia-plugin .download-summary:active {
+    .micronesia-plugin .download-summary {
+    	right: 140px;
+    }
+
+    .micronesia-plugin .download-full {
+    	right: 8px;
+    }
+
+    .micronesia-plugin .download-summary:active,
+    .micronesia-plugin .download-full:active {
     	color: #fff;
 		-webkit-transform: scale(0.9) translateY(4px);
 		-moz-transform: scale(0.9) translateY(4px);
@@ -129,7 +138,8 @@
 		transform: scale(0.9) translateY(4px);
     }
 
-	.micronesia-plugin .download-summary:hover {
+	.micronesia-plugin .download-summary:hover,
+	.micronesia-plugin .download-full:hover {
 		color: #fff;
 		-webkit-transition: all 0.05s ease;
 		-moz-transition: all 0.05s ease;
@@ -282,8 +292,8 @@ by helping to identify areas that are most likely to benefit from improved manag
 			    	</div>
 			    </div>
 	    	</div>
-	    	<a class="download-summary snapshot" href="http://ow-maps.coastalresilience.org/Reports/TNC%20final%20technical%20report%20v1.1.pdf" target="_blank"><i class="fa fa-file-pdf-o" aria-hidden="true"></i>&nbsp;Download Report</a>
-			<!--<a class="download-summary report" href="" target="_blank">Download Policy Brief <i class="fa fa-file-pdf-o" aria-hidden="true"></i></a>-->
+			<a class="download-summary report" href="http://ow-maps.coastalresilience.org/Reports/Micronesia_Fish_Pressure_Report_Summary.pdf" target="_blank"><i class="fa fa-file-pdf-o" aria-hidden="true"></i>&nbsp;Download Full Technical Report </a>
+	    	<a class="download-full report" href="http://ow-maps.coastalresilience.org/Reports/TNC%20final%20technical%20report%20v1.1.pdf" target="_blank"><i class="fa fa-file-pdf-o" aria-hidden="true"></i>&nbsp;Download Summary Report</a>
 
 	    </div>
 	    <div class="stats-description">
