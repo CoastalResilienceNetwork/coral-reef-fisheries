@@ -30,7 +30,6 @@ define([
     "esri/renderer",
     "esri/Color",
     "dojo/text!./template.html",
-    "dojo/text!./layers.json",
     "dojo/text!./data.json",
     "dojo/text!./country-config.json"
     ], function (declare,
@@ -43,7 +42,6 @@ define([
               Renderer,
               Color,
               templates,
-              layerSourcesJson,
               Data,
               CountryConfig
               ) {
@@ -175,6 +173,12 @@ define([
                 // so it shows the shorter version in the select box.
                 if (self.countryConfig[self.region].label) {
                     self.$el.find(".region-select option:selected").text(self.countryConfig[self.region].label);
+                }
+
+                if (self.countryConfig[self.region].SNAPSHOT) { 
+                    this.$el.find(".js-getSnapshot").show();
+                } else {
+                    this.$el.find(".js-getSnapshot").hide();
                 }
 
                 this.setLayerDefinitions();
