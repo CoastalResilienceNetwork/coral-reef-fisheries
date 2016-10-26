@@ -3,7 +3,7 @@
 		"EXTENT" : [104,2,183,22]
 	},
 	"Chuuk" : {
-		"EXTENT" : [131,-4,158,16],
+		"EXTENT" : [150.551,7.021,152.438,7.750],
 		"SNAPSHOT": "http://ow-maps.coastalresilience.org/Reports/Chuuk_PolicyBrief.pdf",
 		"query": {
 			"type": "SUB_JURISD",
@@ -12,7 +12,7 @@
 	},
 	"Federated States of Micronesia (FSM)" : {
 		"label" : "FSM",
-		"EXTENT" : [105,-14,171,27],
+		"EXTENT" : [112.892,2.080,164.938,16.145],
 		"SNAPSHOT": "",
 		"query": {
 			"type": "JURISD",
@@ -20,7 +20,7 @@
 		}
 	},
 	"Guam" : {
-		"EXTENT" : [144,12.5,145,14],
+		"EXTENT" : [143.540,13.149,145.600,13.731],
 		"SNAPSHOT": "http://ow-maps.coastalresilience.org/Reports/Guam_PolicyBrief.pdf",
 		"query": {
 			"type": "JURISD",
@@ -28,7 +28,7 @@
 		}
 	},
 	"Kosrae" : {
-		"EXTENT" : [162,5,163.5,5.5],
+		"EXTENT" :  [162.666,5.234,163.203,5.419],
 		"SNAPSHOT": "http://ow-maps.coastalresilience.org/Reports/Kosrae_PolicyBrief.pdf",
 		"query": {
 			"type": "SUB_JURISD",
@@ -36,7 +36,7 @@
 		}
 	},
 	"Marshall Isl." : {
-		"EXTENT" : [149,-3,174,17],
+		"EXTENT" : [146.345,3.599,172.777,15.452],
 		"SNAPSHOT": "",
 		"query": {
 			"type": "JURISD",
@@ -45,7 +45,7 @@
 	},
 	"Northern Mariana Isl. (CNMI)" : {
 		"label" : "CNMI",
-		"EXTENT" : [140,15,150,17],
+		"EXTENT" : [145.145,15.025,146.012,15.330],
 		"SNAPSHOT": "http://ow-maps.coastalresilience.org/Reports/CNMI_PolicyBrief.pdf",
 		"query": {
 			"type": "JURISD",
@@ -53,7 +53,7 @@
 		}
 	},
 	"Palau" : {
-		"EXTENT" : [120,-2,138,12],
+		"EXTENT" : [132.046,6.962,136.262,8.497],
 		"SNAPSHOT": "",
 		"query": {
 			"type": "JURISD",
@@ -61,7 +61,7 @@
 		}
 	},
 	"Pohnpei" : {
-		"EXTENT" : [149,0.2,165,10],
+		"EXTENT" : [157.502,6.690,158.555,7.072],
 		"SNAPSHOT": "http://ow-maps.coastalresilience.org/Reports/Pohnpei_PolicyBrief.pdf",
 		"query": {
 			"type": "SUB_JURISD",
@@ -69,7 +69,7 @@
 		}
 	},
 	"Yap" : {
-		"EXTENT" : [128,-3,150,17],
+		"EXTENT" : [137.551,9.375,138.519,9.694],
 		"SNAPSHOT": "http://ow-maps.coastalresilience.org/Reports/YAP_PolicyBrief.pdf",
 		"query": {
 			"type": "SUB_JURISD",
