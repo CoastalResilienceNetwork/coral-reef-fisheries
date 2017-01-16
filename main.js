@@ -200,6 +200,12 @@ define([
 
                 this.updateChart();
 
+                ga('send', 'event', {
+                    eventCategory: 'MAR',
+                    eventAction: 'change region',
+                    eventLabel: this.region
+                });
+
             },
 
             setLayerDefinitions: function() {
