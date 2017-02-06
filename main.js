@@ -49,11 +49,11 @@ define([
             toolbarName: "Coral Reef Fisheries",
             fullName: "Configure and control layers to be overlayed on the base map.",
 			//infoGraphic: "plugins/natural_coastal_protection/coastalprotection.jpg",
-            resizable: true,
+            resizable: false,
             width: 425,
-            height: 730,
             showServiceLayersInLegend: true, // Disable the default legend item which doesn't pick up our custom class breaks
             allowIdentifyWhenActive: false,
+            size:'custom',          
 
             unitStyleLookups: {
                 "%": "%",
