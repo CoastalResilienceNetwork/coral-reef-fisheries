@@ -63,7 +63,7 @@
 	}
 
 	.micronesia-plugin .stat .info-tooltip {
-		padding-left: 10px;
+		padding-left: 3px;
 		margin-top: -4px;
 	}
 
@@ -190,7 +190,7 @@
 	}
 
 	.micronesia-plugin .stat .number {
-		width: 130px;
+		width: 160px;
 		padding-left: 8px;
 		font-size: 25px;
 	    font-weight: bold;
@@ -216,14 +216,11 @@
 	    transition: color 0.35s linear;
 	}
 
-	.micronesia-plugin .plugin-tooltip {
-		position: absolute;
-		display: none;
+	.plugin-tooltip {
 		color: #333;
 		border: 1px solid #7EABCD;
 		padding: 5px;
 		border-radius: 5px;
-		font-size: 16px;
 		width: 240px;
 		background-color: #fff;
 		white-space: pre-wrap;
@@ -305,28 +302,28 @@ by helping to identify areas that are most likely to benefit from improved manag
 
 	    	<div class="stat active" data-layer-idx="3" data-layer="Fishing_Pressure_M1">
 	    		<span class="number"><span class="variable"><%= global.Fishing_Pressure_M1.mean %></span> <span class="units"><%= units[global.Fishing_Pressure_M1.unit] %></span></span>
-	    		<span class="description">Estimated Cumulative Fishing Pressure
-	    			<i data-tooltip="Estimated current fishing pressure on coral reef fisheries using the impact on size of parrotfish scaled from 0 (No fishing) to 1 (Highest fishing in region)" class="fa fa-info-circle info-tooltip"></i></span>
+	    		<span class="description">Est. Cumulative Fishing Pressure
+	    			<i title="Estimated current fishing pressure on coral reef fisheries using the impact on size of parrotfish scaled from 0 (No fishing) to 1 (Highest fishing in region)" class="fa fa-info-circle info-tooltip"></i></span>
 	    	</div>
 
 	    	<div class="stat" data-layer-idx="4" data-layer="Standing_Stock_M2">
 	    		<span class="number"><span class="variable"><%= global.Standing_Stock_M2.mean %></span> <span class="units"><%= units[global.Standing_Stock_M2.unit] %></span></span>
 	    		<span class="description"> Current Standing Stock
-	    			<i data-tooltip="Predicted current biomass 19 key coral reef fishery species including, Orange-spine surgeonfish, Blue-spine unicornfish, Bluefin trevally, Chub or drummer, Humphead wrasse, Orange-striped emperor, Longface emperor, Two-spot red snapper, Humpback red snapper, Bicolour parrotfish, Steephead parrotfish, Bullethead parrotfish, Pacific longnose parrotfish, Redlip parrotfish, Brown-marbled grouper, Camouflage grouper, Black-saddled coral grouper, Forktail rabbitfish, and Gold-spotted rabbitfish." class="fa fa-info-circle info-tooltip"></i></span>
+	    			<i title="Predicted current biomass 19 key coral reef fishery species including, Orange-spine surgeonfish, Blue-spine unicornfish, Bluefin trevally, Chub or drummer, Humphead wrasse, Orange-striped emperor, Longface emperor, Two-spot red snapper, Humpback red snapper, Bicolour parrotfish, Steephead parrotfish, Bullethead parrotfish, Pacific longnose parrotfish, Redlip parrotfish, Brown-marbled grouper, Camouflage grouper, Black-saddled coral grouper, Forktail rabbitfish, and Gold-spotted rabbitfish." class="fa fa-info-circle info-tooltip"></i></span>
 	    		
 	    	</div>
 
 	    	<div class="stat" data-layer-idx="5" data-layer="Percent_Gain_M4">
 	    		<span class="number"><span class="variable"><%= global.Percent_Gain_M4.mean %></span> <span class="units"><%= units[global.Percent_Gain_M4.unit] %></span></span>
 	    		<span class="description">Predicted Gain Standing Stock
-	    			<i data-tooltip="The expected percent increase in fish stocks if fishing were reduced to 0 in each 1 HA cell. This could be through a marine reserve or some other fisheries management measure." class="fa fa-info-circle info-tooltip"></i></span>
+	    			<i title="The expected percent increase in fish stocks if fishing were reduced to 0 in each 1 HA cell. This could be through a marine reserve or some other fisheries management measure." class="fa fa-info-circle info-tooltip"></i></span>
 
 	    	</div>
 
 	    	<div class="stat" data-layer-idx="7" data-layer="Recovery_Years_M12">
 	    		<span class="number"><span class="variable"><%= global.Recovery_Years_M12.mean %></span> <span class="units"><%= units[global.Recovery_Years_M12.unit] %></span></span>
 	    		<span class="description">Predicted Recovery Time
-	    			<i data-tooltip="Estimated time it would take for a cell to recover up to 90% of the predicted fish stock capacity of that cell if fishing stopped." class="fa fa-info-circle info-tooltip"></i></span>
+	    			<i title="Estimated time it would take for a cell to recover up to 90% of the predicted fish stock capacity of that cell if fishing stopped." class="fa fa-info-circle info-tooltip"></i></span>
 
 	    	</div>
 
@@ -334,7 +331,6 @@ by helping to identify areas that are most likely to benefit from improved manag
 
 	    <div class="chart-description">
 	    The colored boxes represent where 50% of the data fall. Hover over the chart for more info.</div>
-		<div class="plugin-tooltip"></div>
 	    <div class="chartContainer">
 
 	    </div>

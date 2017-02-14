@@ -29,9 +29,11 @@ define([
     "esri/symbols/SimpleLineSymbol",
     "esri/renderer",
     "esri/Color",
+    "dijit/Tooltip",
     "dojo/text!./template.html",
     "dojo/text!./data.json",
-    "dojo/text!./country-config.json"
+    "dojo/text!./country-config.json",
+    './js/jquery-ui-1.11.2/jquery-ui'
     ], function (declare,
               d3,
               PluginBase,
@@ -41,9 +43,11 @@ define([
               SimpleLineSymbol,
               Renderer,
               Color,
+              Tooltip,
               templates,
               Data,
-              CountryConfig
+              CountryConfig,
+              ui
               ) {
         return declare(PluginBase, {
             toolbarName: "Coral Reef Fisheries",
@@ -100,10 +104,6 @@ define([
 
                 this.$el.on("click", ".stat", function(e) {self.changeScenarioClick(e);});
 
-                this.$el.on("mouseenter", ".info-tooltip", function(e) {self.showTooltip(e);});
-                this.$el.on("mouseleave", ".info-tooltip", $.proxy(this.hideTooltip, this));
-                this.$el.on("mousemove", ".info-tooltip", function(e) {self.moveTooltip(e);});
-
                 this.$el.on("click", ".js-getSnapshot", $.proxy(this.printReport, this));
 
 
@@ -147,6 +147,10 @@ define([
 
                 this.changeScenario();
 
+                this.$el.find('.info-tooltip').tooltip({
+                    tooltipClass: "plugin-tooltip",
+                    track: true,
+                });
             },
 
             // format a number with commas
@@ -255,45 +259,6 @@ define([
 
             },
            
-            // Show graph tooltip on hover
-            showGraphTooltip: function(d, self) {
-                var html = "";
-                html += "max: " + self.data[d][self.layer].max
-                html += "\nthird quartile: " + self.data[d][self.layer].q75
-                html += "\nmedian: " + self.data[d][self.layer].median
-                html += "\nsecond quartile: " + self.data[d][self.layer].q25
-                html += "\nmin: " + self.data[d][self.layer].min
-
-                self.$el.find(".plugin-tooltip").html(html).show();
-            },
-
-            // Track graph tooltip to mouse movement
-            moveGraphTooltip: function(d, el, self) {
-                var offset = this.$el.offset();
-                var x = d3.event.pageX - offset.left;
-                var y = d3.event.pageY - offset.top;
-                this.$el.find(".plugin-tooltip").css({left: x + 5, top: y});
-            },
-
-            // Show info tooltip on mouse hover
-            showTooltip: function(e) {
-                var text = $(e.currentTarget).data("tooltip");
-                this.$el.find(".plugin-tooltip").html(text).css({width: "240"}).show();
-            },
-
-            // Hide graph and info tooltip on mouseout
-            hideTooltip: function() {
-                this.$el.find(".plugin-tooltip").empty().hide();
-            },
-
-            // Track info tooltip to mouse movement
-            moveTooltip: function(e) {
-                var offset = this.$el.offset();
-                var x = e.pageX - offset.left;
-                var y = e.pageY - offset.top;
-                this.$el.find(".plugin-tooltip").css({left: x + 5, top: y});
-            },
-
             // Render the D3 Chart
             renderChart: function() {
                 var self = this;
@@ -378,16 +343,7 @@ define([
                     .attr('data-country', function(d) {
                         return d;
                     })
-                    .attr('class', 'box')
-                    .on("mouseover", function(e) {
-                        self.showGraphTooltip(e, self);
-                    })
-                    .on("mousemove", function(e) {
-                        self.moveGraphTooltip(e, self);
-                    })
-                    .on("mouseout", function(e) {
-                        self.hideTooltip();
-                    });
+                    .attr('class', 'box info-tooltip');
 
                 // whiskers
                 this.chart.whiskers = this.chart.plots.append("line")
@@ -444,7 +400,7 @@ define([
                         return self.chart.y(self.data[d][self.layer].min);
                     });
 
-                  // Boxes
+                // Boxes
                 this.chart.box = this.chart.plots.append("rect")
                     .attr("y", function(d) {
                         return self.chart.y(self.data[d][self.layer].q75);
@@ -516,8 +472,20 @@ define([
                 this.chart.svg.selectAll(".yaxis")
                     .transition().duration(1000)
                     .call(this.chart.yAxis);
+                
+                // Plots
+                this.chart.plots
+                    .attr('title', function(d) {
+                        var html = "";
+                        html += "max: " + self.data[d][self.layer].max;
+                        html += "\nthird quartile: " + self.data[d][self.layer].q75;
+                        html += "\nmedian: " + self.data[d][self.layer].median;
+                        html += "\nsecond quartile: " + self.data[d][self.layer].q25;
+                        html += "\nmin: " + self.data[d][self.layer].min;
+                        return html;
+                    });
 
-                // Boxes
+                // Boxes   
                 this.chart.box = this.chart.plots.selectAll("rect")
                     .transition().duration(1000)
                     .attr("y", function(d) {
