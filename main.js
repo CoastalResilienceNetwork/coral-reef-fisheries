@@ -563,6 +563,15 @@ define([
                     .html().trim();
             },
 
+            deactivate: function() {
+                if (this.appDiv !== undefined){
+                    if (this.fisheriesLayer) {
+                        this.fisheriesLayer.hide();
+                    }
+                    $(this.legendContainer).hide().html();
+                }
+            },
+
             // Turn of the layers when hibernating
             hibernate: function () {
                 // Cleanup
