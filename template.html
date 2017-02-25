@@ -9,6 +9,19 @@
 		-webkit-user-select: none;
 		-ms-user-select: none;
 		user-select:none;
+		line-height: 16px;
+	}
+
+	section {
+		border-bottom: none !important;
+	}
+
+	section.region {
+	    padding: 10px;
+	}
+
+	section.header h3 {
+	    text-align: center;
 	}
 
 	.micronesia-plugin .clearfix {
@@ -21,14 +34,6 @@
 		font-weight: bold;
 	    font-size: 18px;
 	    text-align: center;
-	}
-
-	.micronesia-plugin .main-message {
-		margin: 4px;
-		font-size: 13px;
-		line-height: 17px;
-		text-align: left;
-		font-weight: bold;
 	}
 
 	.micronesia-plugin .controls-container {
@@ -271,31 +276,36 @@
 </style>
 
 	<div class="micronesia-plugin">
-	    <div class="title">Coral Reef Fisheries</div>
-	    <div class="main-message">
-	    	This app demonstrates the impact of human populations on fish stocks and supports fisheries management
-by helping to identify areas that are most likely to benefit from improved management.
-	    </div>
-	    <div class="controls-container clearfix">
+	    <section class="header">
+	    	<h3>Coral Reef Fisheries</h3>
+		    <div>
+		    	This app demonstrates the impact of human populations on fish stocks and supports fisheries management
+				by helping to identify areas that are most likely to benefit from improved management.
+		    </div>
+	    </section>
 
-	    	<div class="region-select-container">
-		    		<div class="region-container">
-		    		<span class="control-title">Region:</span>
-		    		<div class="styled-select">
-			    		<select class="region-select">
-			    			<optgroup label="Select Region">
-			    			<% _.each(regions, function(val, key) { %>
-			    				<option value="<%= key %>" <% if (key === "Global") { %> selected <% } %> data-text="<%= key %>" ><%= key %></option>
-			    			<% }); %>
-			    			</optgroup>
-			    		</select>
-			    	</div>
-			    </div>
-	    	</div>
-			<a class="download-full report" href="http://ow-maps.coastalresilience.org/Reports/TNC%20final%20technical%20report%20v1.1.pdf" target="_blank"><i class="fa fa-file-pdf-o" aria-hidden="true"></i>&nbsp;Download Full Technical Report </a>
-	    	<a class="download-summary report js-getSnapshot" href="" target="_blank"><i class="fa fa-file-pdf-o" aria-hidden="true"></i>&nbsp;Download Policy Brief</a>
+	    <section class="region">
+	    	<span class="control-title">Region:</span>
+	    	<div class="dropdown" style="width: 160px;">
+				<button style="width: 160px; text-align: center; margin-left: -5px;" class="button dropdown-toggle" type="button" id="countrydropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+					<span class="region-label" data-region="Micronesia">Micronesia</span>
+					<i class="icon-down-open-mini caret" style="right: 10px; top: 15px; position: absolute;"></i>
+				</button>
+				<ul class="dropdown-menu" aria-labelledby="countrydropdown">
+					<% _.each(regions, function(val, key) { %>
+	    				<li data-region="<%= key %>"><a href="#"><%= key %></a></li>
+	    			<% }); %>
+				</ul>
+			</div>
 
-	    </div>
+			<button class="button button-default js-getSnapshot" target="_blank" style="display: none">Download Policy Brief <i class="fa fa-file-pdf-o" aria-hidden="true"></i></button>
+	    	
+	    	<a href="http://ow-maps.coastalresilience.org/Reports/TNC%20final%20technical%20report%20v1.1.pdf" target="_blank">
+				<button class="button button-primary js-getSnapshot" style="color: #fff;">Download Full Technical Report</button>
+			</a>
+
+	    </section>
+
 	    <div class="stats-description">
 	    These summary statistics represent the MEAN values for each parameter summarized by the selected region. Click the statistics below to change the map and graph.</div>
 	    <div class="stats-container">

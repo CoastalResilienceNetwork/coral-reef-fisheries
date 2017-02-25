@@ -28,6 +28,8 @@ define([
     "esri/renderers/ClassBreaksRenderer",
     "esri/symbols/SimpleLineSymbol",
     "esri/renderer",
+    "dijit/layout/ContentPane",
+    "dojo/dom",
     "esri/Color",
     "dijit/Tooltip",
     "dojo/text!./template.html",
@@ -42,6 +44,8 @@ define([
               ClassBreaksRenderer,
               SimpleLineSymbol,
               Renderer,
+              ContentPane,
+              dom,
               Color,
               Tooltip,
               templates,
@@ -100,7 +104,7 @@ define([
                 // Set event listeners.  We bind "this" where needed so the event handler can access the full
                 // scope of the plugin
                 this.$el.on("mousedown", ".region-select", $.proxy(this.updateRegionText, this));
-                this.$el.on("change", ".region-select", $.proxy(this.changeRegion, this));
+                this.$el.on("click", ".region .dropdown li", $.proxy(this.selectRegion, this));
 
                 this.$el.on("click", ".stat", function(e) {self.changeScenarioClick(e);});
 
@@ -167,16 +171,28 @@ define([
                 });
             },
 
+            selectRegion: function(e) {
+                this.region = $(e.currentTarget).data('region');
+                this.$el.find(".region-label").html(this.region);
+                this.changeRegion(this.region);
+                console.log('here', $(e.currentTarget))
+            },
+
             // Change the default region.  If global, zoom to the full extent and show data for all countries.  If regional,
             // zoom to the country based on the bookmark in the extent-bookmarks.json file and hide data for all other countries
-            changeRegion: function() {
+            changeRegion: function(region) {
                 var self = this;
-                this.region = this.$el.find(".region-select").val();
+                
+                if (region) {
+                    this.region = region;
+                } else {
+                    this.region = this.$el.find(".region-label").data('region');
+                }
 
                 // When selecting a new region, if it has a shorter label, set the text value to that
                 // so it shows the shorter version in the select box.
                 if (self.countryConfig[self.region].label) {
-                    self.$el.find(".region-select option:selected").text(self.countryConfig[self.region].label);
+                    self.$el.find(".region-label").text(self.countryConfig[self.region].label);
                 }
 
                 if (self.countryConfig[self.region].SNAPSHOT) { 
@@ -255,7 +271,20 @@ define([
                     units: this.unitStyleLookups
                 }));
 
-                $(this.container).empty().append($el);
+
+
+                this.appDiv = new ContentPane({style:'padding:0; color:#000; flex:1; display:flex; flex-direction:column;}'});
+                this.id = this.appDiv.id;
+                $(dom.byId(this.container)).addClass('sty_flexColumn');
+                this.$el.html(this.appDiv.domNode);                  
+                // Get html from content.html, prepend appDiv.id to html element id's, and add to appDiv
+                var idUpdate = this.pluginTmpl({
+                    global: this.data.Micronesia,
+                    regions: this.data,
+                    pane: this.app.paneNumber,
+                    config: this.countryConfig,
+                    units: this.unitStyleLookups}).replace(/id='/g, "id='" + this.id);  
+                $('#' + this.id).html(idUpdate);
 
             },
            
