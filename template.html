@@ -20,6 +20,10 @@
 	    padding: 10px;
 	}
 
+	section.header {
+		padding: 5px 8px;
+	}
+
 	section.header h3 {
 	    text-align: center;
 	}
@@ -62,7 +66,7 @@
 	}
 
 	.micronesia-plugin .info-tooltip {
-		color: #226491;
+		color: #438c9d;
 		font-size: 16px;
 		vertical-align: middle;
 	}
@@ -118,9 +122,9 @@
 	    padding: 0;
 	    color: #fff !important;
 	    cursor: pointer;
-	    border: 1px solid #226491;
+	    border: 1px solid #438c9d;
 	    border-radius: 4px;
-	    background-color: #226491;
+	    background-color: #438c9d;
 	    text-align: center;
 	    box-shadow: 2px 2px 5px 1px rgba(34,100,145, 0.2);
 	    transition: box-shadow 0.2s;
@@ -161,6 +165,7 @@
 	    font-size: 14px;
 	    text-align: left;
 	    line-height: 17px;
+	    clear: both;
     }
 
     .micronesia-plugin .chart-description {
@@ -171,32 +176,31 @@
     }
 
 	.micronesia-plugin .stats-container {
-		display: table;
 		margin: auto;
 	}
 
 	.micronesia-plugin .stat {
-		height: 35px;
-		display: table-row;
+		height: 45px;
+    	padding-top: 15px;
+		border-bottom: 1px solid #ccc;
 	}
 
 	.micronesia-plugin .stat .description,
 	.micronesia-plugin .stat .number {
-		display: table-cell;
-		border-bottom: 1px solid #ccc;
+		display: inline-block;
 		cursor: pointer;
 		text-align: left;
 		transition: color 0.35s linear;
+		vertical-align: middle;
 	}
 
-	.micronesia-plugin .stat:last-child .description,
-	.micronesia-plugin .stat:last-child .number {
+	.micronesia-plugin .stat:last-child {
 		border: none;
 	}
 
 	.micronesia-plugin .stat .number {
 		width: 160px;
-		padding-left: 8px;
+		padding-left: 14px;
 		font-size: 25px;
 	    font-weight: bold;
 	    color: #d8d8d8;
@@ -210,14 +214,13 @@
 	.micronesia-plugin .stat.active .number,
 	.micronesia-plugin .stat:hover .description,
 	.micronesia-plugin .stat:hover .number {
-		color: #226491;
+		color: #438c9d;
 	}
 
 	.micronesia-plugin .stat .description {
 	    padding-left: 10px;
 		color: #d8d8d8;
 	    font-size: 14px;
-	    vertical-align: middle;
 	    transition: color 0.35s linear;
 	}
 
@@ -272,12 +275,10 @@
 		text-align: left;
 	}
 
-
 </style>
 
 	<div class="micronesia-plugin">
 	    <section class="header">
-	    	<h3>Coral Reef Fisheries</h3>
 		    <div>
 		    	This app demonstrates the impact of human populations on fish stocks and supports fisheries management
 				by helping to identify areas that are most likely to benefit from improved management.
@@ -286,9 +287,9 @@
 
 	    <section class="region">
 	    	<span class="control-title">Region:</span>
-	    	<div class="dropdown" style="width: 160px;">
+	    	<div class="dropdown" style="width: 160px; display: inline-block;">
 				<button style="width: 160px; text-align: center; margin-left: -5px;" class="button dropdown-toggle" type="button" id="countrydropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-					<span class="region-label" data-region="Micronesia">Micronesia</span>
+					<span class="region-label" data-key="Micronesia" data-region="Micronesia">Micronesia</span>
 					<i class="icon-down-open-mini caret" style="right: 10px; top: 15px; position: absolute;"></i>
 				</button>
 				<ul class="dropdown-menu" aria-labelledby="countrydropdown">
@@ -298,10 +299,10 @@
 				</ul>
 			</div>
 
-			<button class="button button-default js-getSnapshot" target="_blank" style="display: none">Download Policy Brief <i class="fa fa-file-pdf-o" aria-hidden="true"></i></button>
+			<button class="button button-default js-getSnapshot" target="_blank" style="display: none; float: right;">Download Policy Brief <i class="fa fa-file-pdf-o" aria-hidden="true"></i></button>
 	    	
 	    	<a href="http://ow-maps.coastalresilience.org/Reports/TNC%20final%20technical%20report%20v1.1.pdf" target="_blank">
-				<button class="button button-primary js-getSnapshot" style="color: #fff;">Download Full Technical Report</button>
+				<button class="button button-primary" style="color: #fff; float: right;">Download Full Technical Report</button>
 			</a>
 
 	    </section>
@@ -311,27 +312,27 @@
 	    <div class="stats-container">
 
 	    	<div class="stat active" data-layer-idx="3" data-layer="Fishing_Pressure_M1">
-	    		<span class="number"><span class="variable"><%= global.Fishing_Pressure_M1.mean %></span> <span class="units"><%= units[global.Fishing_Pressure_M1.unit] %></span></span>
+	    		<div class="number"><span class="variable"><%= global.Fishing_Pressure_M1.mean %></span> <span class="units"><%= units[global.Fishing_Pressure_M1.unit] %></span></div>
 	    		<span class="description">Est. Cumulative Fishing Pressure
 	    			<i title="Estimated current fishing pressure on coral reef fisheries using the impact on size of parrotfish scaled from 0 (No fishing) to 1 (Highest fishing in region)" class="fa fa-info-circle info-tooltip"></i></span>
 	    	</div>
 
 	    	<div class="stat" data-layer-idx="4" data-layer="Standing_Stock_M2">
-	    		<span class="number"><span class="variable"><%= global.Standing_Stock_M2.mean %></span> <span class="units"><%= units[global.Standing_Stock_M2.unit] %></span></span>
+	    		<div class="number"><span class="variable"><%= global.Standing_Stock_M2.mean %></span> <span class="units"><%= units[global.Standing_Stock_M2.unit] %></span></div>
 	    		<span class="description"> Current Standing Stock
 	    			<i title="Predicted current biomass 19 key coral reef fishery species including, Orange-spine surgeonfish, Blue-spine unicornfish, Bluefin trevally, Chub or drummer, Humphead wrasse, Orange-striped emperor, Longface emperor, Two-spot red snapper, Humpback red snapper, Bicolour parrotfish, Steephead parrotfish, Bullethead parrotfish, Pacific longnose parrotfish, Redlip parrotfish, Brown-marbled grouper, Camouflage grouper, Black-saddled coral grouper, Forktail rabbitfish, and Gold-spotted rabbitfish." class="fa fa-info-circle info-tooltip"></i></span>
 	    		
 	    	</div>
 
 	    	<div class="stat" data-layer-idx="5" data-layer="Percent_Gain_M4">
-	    		<span class="number"><span class="variable"><%= global.Percent_Gain_M4.mean %></span> <span class="units"><%= units[global.Percent_Gain_M4.unit] %></span></span>
+	    		<div class="number"><span class="variable"><%= global.Percent_Gain_M4.mean %></span> <span class="units"><%= units[global.Percent_Gain_M4.unit] %></span></div>
 	    		<span class="description">Predicted Gain Standing Stock
 	    			<i title="The expected percent increase in fish stocks if fishing were reduced to 0 in each 1 HA cell. This could be through a marine reserve or some other fisheries management measure." class="fa fa-info-circle info-tooltip"></i></span>
 
 	    	</div>
 
 	    	<div class="stat" data-layer-idx="7" data-layer="Recovery_Years_M12">
-	    		<span class="number"><span class="variable"><%= global.Recovery_Years_M12.mean %></span> <span class="units"><%= units[global.Recovery_Years_M12.unit] %></span></span>
+	    		<div class="number"><span class="variable"><%= global.Recovery_Years_M12.mean %></span> <span class="units"><%= units[global.Recovery_Years_M12.unit] %></span></div>
 	    		<span class="description">Predicted Recovery Time
 	    			<i title="Estimated time it would take for a cell to recover up to 90% of the predicted fish stock capacity of that cell if fishing stopped." class="fa fa-info-circle info-tooltip"></i></span>
 

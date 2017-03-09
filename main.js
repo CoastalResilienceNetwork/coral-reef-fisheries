@@ -94,7 +94,7 @@ define([
                     bottom: 40
                 };
                 this.chart.position.width = (this.width - 30)- this.chart.position.margin.left - this.chart.position.margin.right;
-                this.chart.position.height = 245  - this.chart.position.margin.top - this.chart.position.margin.bottom;
+                this.chart.position.height = 275  - this.chart.position.margin.top - this.chart.position.margin.bottom;
               
             },
 
@@ -173,26 +173,31 @@ define([
 
             selectRegion: function(e) {
                 this.region = $(e.currentTarget).data('region');
-                this.$el.find(".region-label").html(this.region);
                 this.changeRegion(this.region);
-                console.log('here', $(e.currentTarget))
             },
 
             // Change the default region.  If global, zoom to the full extent and show data for all countries.  If regional,
             // zoom to the country based on the bookmark in the extent-bookmarks.json file and hide data for all other countries
             changeRegion: function(region) {
                 var self = this;
-                
                 if (region) {
                     this.region = region;
                 } else {
-                    this.region = this.$el.find(".region-label").data('region');
+                    this.region = this.$el.find(".region-label").data('key');
                 }
 
                 // When selecting a new region, if it has a shorter label, set the text value to that
                 // so it shows the shorter version in the select box.
+                var label = this.countryConfig[this.region].label || this.region;
+                
+
                 if (self.countryConfig[self.region].label) {
-                    self.$el.find(".region-label").text(self.countryConfig[self.region].label);
+                    self.$el.find(".region-label")
+                        .text(self.countryConfig[self.region].label)
+                        .attr('key', this.region);
+                } else {
+                    this.$el.find(".region-label").text(label)
+                        .attr('key', this.region);
                 }
 
                 if (self.countryConfig[self.region].SNAPSHOT) { 
@@ -338,7 +343,7 @@ define([
                 // Add the xaxis
                 this.chart.svg.append("g")
                     .attr("class", "xaxis")
-                    .attr("transform", "translate(0," + (this.chart.position.height-15) + ")")
+                    .attr("transform", "translate(0," + (this.chart.position.height-25) + ")")
                     .call(this.chart.xAxis)
                     .selectAll("line")
                         .attr("x1", 8)
@@ -450,8 +455,9 @@ define([
                     .attr("width", (self.chart.position.width/self.countryNames.length) - ((self.chart.position.width/self.countryNames.length) * 0.2)) // 20% gap
                     .attr("cursor", "pointer")
                     .on("click", function(d) {
-                        self.$el.find(".region-select").val(d);
-                        self.changeRegion();
+                        console.log(d);
+                        //self.$el.find(".region-select").val(d);
+                        self.changeRegion(d);
                     });
 
                 // median lines
