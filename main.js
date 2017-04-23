@@ -2,16 +2,6 @@ require({
     // Specify library locations.
     packages: [
         {
-            name: "jquery",
-            location: "//ajax.googleapis.com/ajax/libs/jquery/1.9.0",
-            main: "jquery.min"
-        },
-        {
-            name: "underscore",
-            location: "//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3",
-            main: "underscore-min"
-        },
-        {
             name: "d3",
             location: "//d3js.org",
             main: "d3.v3.min"
@@ -34,8 +24,7 @@ define([
     "dijit/Tooltip",
     "dojo/text!./template.html",
     "dojo/text!./data.json",
-    "dojo/text!./country-config.json",
-    './js/jquery-ui-1.11.2/jquery-ui'
+    "dojo/text!./country-config.json"
     ], function (declare,
               d3,
               PluginBase,
@@ -50,8 +39,7 @@ define([
               Tooltip,
               templates,
               Data,
-              CountryConfig,
-              ui
+              CountryConfig
               ) {
         return declare(PluginBase, {
             toolbarName: "Micronesia Fisheries",
