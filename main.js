@@ -54,7 +54,7 @@ define([
               ui
               ) {
         return declare(PluginBase, {
-            toolbarName: "Coral Reef Fisheries",
+            toolbarName: "Micronesia Fisheries",
             fullName: "Configure and control layers to be overlayed on the base map.",
 			//infoGraphic: "plugins/natural_coastal_protection/coastalprotection.jpg",
             resizable: false,
