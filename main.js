@@ -131,6 +131,8 @@ define([
                 this.render();
                 this.renderChart();
 
+                $('.sidebar-nav .nav-title').css("margin-left", "25px");
+
                 // If the plugin hasn't been opened, or if it was closed (not-minimized) run the firstLoad function and reset the
                 // default variables
                 if (!this.fisheriesLayer || !this.fisheriesLayer.visible) {
@@ -290,6 +292,17 @@ define([
                     config: this.countryConfig,
                     units: this.unitStyleLookups}).replace(/id='/g, "id='" + this.id);  
                 $('#' + this.id).html(idUpdate);
+
+                $(this.container).parent().append('<button id="viewCrsInfoGraphicIcon" title="View infographic" class="button button-default ig-icon"><img src="plugins/coral-reef-fisheries/InfographicIcon_v1_23x23.png" alt="show overview graphic"></button>');
+                $(this.container).parent().find("#viewCrsInfoGraphicIcon").on('click',function(c){
+                    TINY.box.show({
+                        animate: true,
+                        url: 'plugins/coral-reef-fisheries/infographic.html',
+                        fixed: true,
+                        width: 600,
+                        height: 497
+                    });
+                }).tooltip();
 
             },
            
@@ -605,6 +618,8 @@ define([
                     }
                     $(this.legendContainer).hide().html();
                 }
+
+                $('.sidebar-nav .nav-title').css("margin-left", "0px");
             },
 
             // Turn of the layers when hibernating
