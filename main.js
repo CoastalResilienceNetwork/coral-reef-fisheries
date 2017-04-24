@@ -119,7 +119,7 @@ define([
                 this.render();
                 this.renderChart();
 
-                $('.sidebar-nav .nav-title').css("margin-left", "25px");
+                this.$el.prev('.sidebar-nav').find('.nav-title').css("margin-left", "25px");
 
                 // If the plugin hasn't been opened, or if it was closed (not-minimized) run the firstLoad function and reset the
                 // default variables
@@ -281,8 +281,8 @@ define([
                     units: this.unitStyleLookups}).replace(/id='/g, "id='" + this.id);  
                 $('#' + this.id).html(idUpdate);
 
-                $(this.container).parent().append('<button id="viewCrsInfoGraphicIcon" title="View infographic" class="button button-default ig-icon"><img src="plugins/coral-reef-fisheries/InfographicIcon_v1_23x23.png" alt="show overview graphic"></button>');
-                $(this.container).parent().find("#viewCrsInfoGraphicIcon").on('click',function(c){
+                $(this.container).parent().append('<button title="View infographic" class="button button-default ig-icon viewCrsInfoGraphicIcon"><img src="plugins/coral-reef-fisheries/InfographicIcon_v1_23x23.png" alt="show overview graphic"></button>');
+                $(this.container).parent().find(".viewCrsInfoGraphicIcon").on('click',function(c){
                     TINY.box.show({
                         animate: true,
                         url: 'plugins/coral-reef-fisheries/infographic.html',
@@ -607,7 +607,7 @@ define([
                     $(this.legendContainer).hide().html();
                 }
 
-                $('.sidebar-nav .nav-title').css("margin-left", "0px");
+                //$('.sidebar-nav .nav-title').css("margin-left", "0px");
             },
 
             // Turn of the layers when hibernating
