@@ -55,10 +55,10 @@
 		text-align: center;
 	}
 
-	.micronesia-plugin .control-title {
-		position: absolute;
-    	left: 8px;
-		font-size: 12px;
+	.micronesia-plugin .region .control-title {
+		display: block;
+	    font-size: 12px;
+	    margin-bottom: 2px;
 	}
 
 
@@ -297,22 +297,21 @@
 
 	    <section class="region">
 	    	<span class="control-title">Region:</span>
-	    	<div class="dropdown" style="width: 160px; display: inline-block;">
-				<button style="width: 160px; text-align: center; margin-left: -5px;" class="button dropdown-toggle" type="button" id="countrydropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-					<span class="region-label" data-key="Micronesia" data-region="Micronesia">Micronesia</span>
-					<i class="icon-down-open-mini caret" style="right: 10px; top: 15px; position: absolute;"></i>
-				</button>
-				<ul class="dropdown-menu" aria-labelledby="countrydropdown">
-					<% _.each(regions, function(val, key) { %>
-	    				<li data-region="<%= key %>"><a href="#"><%= key %></a></li>
-	    			<% }); %>
-				</ul>
+
+
+	    	<div class="chosen-wrap" style="width: 160px; display: inline-block;">
+				<select id="chosenRegion" class="chosen">
+					<option value="Micronesia" selected>Micronesia</option>
+	    			<% _.each(regions, function(val, key) { if (key !== "Micronesia") { %>
+	    				<option value="<%= key %>"><%= key %></option>
+	    			<% }}); %>
+				</select>
 			</div>
 
 			<button class="button button-default js-getSnapshot" target="_blank" style="display: none; float: right;">Download Policy Brief <i class="fa fa-file-pdf-o" aria-hidden="true"></i></button>
 	    	
 	    	<a href="http://ow-maps.coastalresilience.org/Reports/TNC%20final%20technical%20report%20v1.1.pdf" target="_blank">
-				<button class="button button-primary" style="color: #fff; float: right;">Download Full Technical Report</button>
+				<button class="button button-primary" style="color: #fff; float: right; clear: both;">Download Full Technical Report</button>
 			</a>
 
 	    </section>

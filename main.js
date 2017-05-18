@@ -92,13 +92,8 @@ define([
                 // Set event listeners.  We bind "this" where needed so the event handler can access the full
                 // scope of the plugin
                 this.$el.on("mousedown", ".region-select", $.proxy(this.updateRegionText, this));
-                this.$el.on("click", ".region .dropdown li", $.proxy(this.selectRegion, this));
-
                 this.$el.on("click", ".stat", function(e) {self.changeScenarioClick(e);});
-
                 this.$el.on("click", ".js-getSnapshot", $.proxy(this.printReport, this));
-
-
             },
 
             // This function loads the first time the plugin is opened, or after the plugin has been closed (not minimized).
@@ -161,34 +156,11 @@ define([
                 });
             },
 
-            selectRegion: function(e) {
-                this.region = $(e.currentTarget).data('region');
-                this.changeRegion(this.region);
-            },
-
             // Change the default region.  If global, zoom to the full extent and show data for all countries.  If regional,
             // zoom to the country based on the bookmark in the extent-bookmarks.json file and hide data for all other countries
-            changeRegion: function(region) {
+            changeRegion: function() {
                 var self = this;
-                if (region) {
-                    this.region = region;
-                } else {
-                    this.region = this.$el.find(".region-label").data('key');
-                }
-
-                // When selecting a new region, if it has a shorter label, set the text value to that
-                // so it shows the shorter version in the select box.
-                var label = this.countryConfig[this.region].label || this.region;
-                
-
-                if (self.countryConfig[self.region].label) {
-                    self.$el.find(".region-label")
-                        .text(self.countryConfig[self.region].label)
-                        .attr('key', this.region);
-                } else {
-                    this.$el.find(".region-label").text(label)
-                        .attr('key', this.region);
-                }
+                this.region = this.$el.find("#chosenRegion").val();
 
                 if (self.countryConfig[self.region].SNAPSHOT) { 
                     this.$el.find(".js-getSnapshot").show();
@@ -258,6 +230,7 @@ define([
             // Render the plugin DOM
 
             render: function() {
+                var self = this;
                 var $el = $(this.pluginTmpl({
                     global: this.data.Micronesia,
                     regions: this.data,
@@ -265,8 +238,6 @@ define([
                     config: this.countryConfig,
                     units: this.unitStyleLookups
                 }));
-
-
 
                 this.appDiv = new ContentPane({style:'padding:0; color:#000; flex:1; display:flex; flex-direction:column;}'});
                 this.id = this.appDiv.id;
@@ -292,6 +263,18 @@ define([
                         height: 497
                     });
                 }).tooltip();
+
+                this.$el.find('#chosenRegion').chosen({
+                    disable_search_threshold: 20,
+                    width: '160px'
+                }).on('change', function(e, params) {
+                    // Show abbreviation when label is set in the parameters
+                    var label = self.countryConfig[params.selected].label;
+                    if (label) {
+                        self.$el.find('.chosen-single span').html(label);
+                    }
+                    self.changeRegion();
+                });
 
             },
            
@@ -457,9 +440,12 @@ define([
                     .attr("width", (self.chart.position.width/self.countryNames.length) - ((self.chart.position.width/self.countryNames.length) * 0.2)) // 20% gap
                     .attr("cursor", "pointer")
                     .on("click", function(d) {
-                        console.log(d);
-                        //self.$el.find(".region-select").val(d);
-                        self.changeRegion(d);
+                        self.$el.find('#chosenRegion').val(d).trigger('chosen:updated');
+                        var label = self.countryConfig[d].label;
+                        if (label) {
+                            self.$el.find('.chosen-single span').html(label);
+                        }
+                        self.changeRegion();
                     });
 
                 // median lines
