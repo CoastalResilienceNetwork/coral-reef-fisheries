@@ -119,15 +119,14 @@ define([
                 // If the plugin hasn't been opened, or if it was closed (not-minimized) run the firstLoad function and reset the
                 // default variables
                 if (!this.fisheriesLayer || !this.fisheriesLayer.visible) {
-                    
-                    this.firstLoad();
                     this.region = "Micronesia";
                     this.layer = "Fishing_Pressure_M1";
+                    this.firstLoad();
                 }
 
                 // restore state of people, capital, area selector
                 this.$el.find(".stat.active").removeClass("active");
-                $(".stat[data-layer='" + this.layer + "']").addClass("active");
+                this.$el.find(".stat[data-layer='" + this.layer + "']").addClass("active");
 
                 // Restore state of region select
                 this.$el.find(".region-select").val(this.region);
