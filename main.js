@@ -150,7 +150,7 @@ define([
                 this.$el.find('.stat[data-layer="' + this.layer + '"]').addClass('active');
 
                 // Restore state of region select
-                this.$el.find('#chosenRegion').val(this.region).trigger('chosen:updated');
+                this.$el.find('#crf-select-region').val(this.region).trigger('chosen:updated');
 
                 this.changeRegion();
 
@@ -181,7 +181,7 @@ define([
             // the extent-bookmarks.json file and hide data for all other countries
             changeRegion: function() {
                 var self = this;
-                this.region = this.$el.find('#chosenRegion').val();
+                this.region = this.$el.find('#crf-select-region').val();
                 this.state = this.state.setRegion(this.region);
 
                 if (self.countryConfig[self.region].SNAPSHOT) {
@@ -245,7 +245,7 @@ define([
             // Update the renderer to reflect storm return period and the fact being displayed.
             changeScenario: function() {
                 this.$el.find('.stat.active').removeClass('active');
-                $('.stat[data-layer="' + this.layer + '"]').addClass('active');
+                this.$el.find('.stat[data-layer="' + this.layer + '"]').addClass('active');
 
                 this.fisheriesLayer.setVisibleLayers([this.layerIDX]);
                 this.state = this.state.setLayer(this.layer);
@@ -280,7 +280,7 @@ define([
                     pane: this.app.paneNumber,
                     config: this.countryConfig,
                     units: this.unitStyleLookups}).replace(/id='/g, "id='" + this.id);
-                $('#' + this.id).html(idUpdate);
+                this.$el.find('#' + this.id).html(idUpdate);
 
                 $(this.container).parent().find('.viewCrsInfoGraphicIcon').remove();
                 $(this.container).parent().find('.sidebar-nav').prepend(
@@ -296,7 +296,7 @@ define([
                     });
                 }).tooltip();
 
-                this.$el.find('#chosenRegion').chosen({
+                this.$el.find('#crf-select-region').chosen({
                     disable_search_threshold: 20,
                     width: '160px'
                 }).on('change', function(e, params) {
@@ -478,7 +478,7 @@ define([
                         ((self.chart.position.width / self.countryNames.length) * 0.2)) // 20% gap
                     .attr('cursor', 'pointer')
                     .on('click', function(d) {
-                        self.$el.find('#chosenRegion').val(d).trigger('chosen:updated');
+                        self.$el.find('#crf-select-region').val(d).trigger('chosen:updated');
                         var label = self.countryConfig[d].label;
                         if (label) {
                             self.$el.find('.chosen-single span').html(label);
