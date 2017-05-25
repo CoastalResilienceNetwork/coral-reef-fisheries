@@ -22,6 +22,7 @@ define([
     "dojo/dom",
     "esri/Color",
     "dijit/Tooltip",
+    "./State",
     "dojo/text!./template.html",
     "dojo/text!./data.json",
     "dojo/text!./country-config.json"
@@ -37,6 +38,7 @@ define([
               dom,
               Color,
               Tooltip,
+              State,
               templates,
               Data,
               CountryConfig
@@ -44,7 +46,6 @@ define([
         return declare(PluginBase, {
             toolbarName: "Micronesia Fisheries",
             fullName: "Configure and control layers to be overlayed on the base map.",
-			//infoGraphic: "plugins/natural_coastal_protection/coastalprotection.jpg",
             resizable: false,
             width: 425,
             showServiceLayersInLegend: true, // Disable the default legend item which doesn't pick up our custom class breaks
@@ -67,9 +68,10 @@ define([
                 this.$el = $(this.container);
 
                 // Default Settings
-                this.layer = "Fishing_Pressure_M1";
-                this.region = "Micronesia";
-                this.layerIDX = 3;
+                this.state = new State();
+                this.region = this.state.getRegion();
+                this.layerIDX = this.state.getLayerIDX();
+                this.layer = this.state.getLayer();
 
                 this.bindEvents();
 
@@ -96,6 +98,21 @@ define([
                 this.$el.on("click", ".js-getSnapshot", $.proxy(this.printReport, this));
             },
 
+            setState: function(data) {
+                this.state = new State(data);
+                this.region = data.region;
+                this.layer = data.layer;
+                this.layerIDX = data.layerIDX;
+            },
+
+            getState: function() {
+                return {
+                    region: this.state.getRegion(),
+                    layer: this.state.getLayer(),
+                    layerIDX: this.state.getLayerIDX(),
+                };
+            },
+
             // This function loads the first time the plugin is opened, or after the plugin has been closed (not minimized).
             // It sets up the layers with their default settings
 
@@ -116,11 +133,13 @@ define([
 
                 this.$el.prev('.sidebar-nav').find('.nav-title').css("margin-left", "25px");
 
+                this.region = this.state.getRegion();
+                this.layer = this.state.getLayer();
+                this.layerIDX = this.state.getLayerIDX();
+
                 // If the plugin hasn't been opened, or if it was closed (not-minimized) run the firstLoad function and reset the
                 // default variables
                 if (!this.fisheriesLayer || !this.fisheriesLayer.visible) {
-                    this.region = "Micronesia";
-                    this.layer = "Fishing_Pressure_M1";
                     this.firstLoad();
                 }
 
@@ -129,10 +148,10 @@ define([
                 this.$el.find(".stat[data-layer='" + this.layer + "']").addClass("active");
 
                 // Restore state of region select
-                this.$el.find(".region-select").val(this.region);
+                this.$el.find("#chosenRegion").val(this.region).trigger('chosen:updated');
 
                 this.changeRegion();
-
+                
                 this.changeScenario();
 
                 this.$el.find('.info-tooltip').tooltip({
@@ -160,6 +179,7 @@ define([
             changeRegion: function() {
                 var self = this;
                 this.region = this.$el.find("#chosenRegion").val();
+                this.state = this.state.setRegion(this.region);
 
                 if (self.countryConfig[self.region].SNAPSHOT) { 
                     this.$el.find(".js-getSnapshot").show();
@@ -221,6 +241,8 @@ define([
                 $(".stat[data-layer='" + this.layer + "']").addClass("active");
 
                 this.fisheriesLayer.setVisibleLayers([this.layerIDX]);
+                this.state = this.state.setLayer(this.layer);
+                this.state = this.state.setLayerIDX(this.layerIDX);
 
                 this.updateChart();
                 
