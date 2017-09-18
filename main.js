@@ -119,7 +119,7 @@ define([
             // has been closed (not minimized). It sets up the layers with their default settings
 
             firstLoad: function() {
-                this.fisheriesLayer = new ArcGISDynamicMapServiceLayer('http://dev.services2.coastalresilience.org/arcgis/rest/services/OceanWealth/Micronesia_Coral_Reef_Fisheries/MapServer', {});
+                this.fisheriesLayer = new ArcGISDynamicMapServiceLayer('http://services.coastalresilience.org/arcgis/rest/services/OceanWealth/Coral_Reef_Fisheries/MapServer', {});
                 this.fisheriesLayer.setVisibleLayers([this.layerIDX]);
 
                 this.map.addLayer(this.fisheriesLayer);
