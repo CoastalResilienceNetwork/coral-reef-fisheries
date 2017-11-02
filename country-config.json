@@ -75,5 +75,93 @@
 			"type": "SUB_JURISD",
 			"label": "Yap"
 		}
+	},
+	"Andros" : {
+		"EXTENT" : [150.551,7.021,152.438,7.750],
+		"SNAPSHOT": "http://ow-maps.coastalresilience.org/Reports/Chuuk_PolicyBrief.pdf",
+		"query": {
+			"type": "SUB_JURISD",
+			"label": "Chuuk"
+		}
+	},
+	"Bahamas" : {
+		"EXTENT" : [150.551,7.021,152.438,7.750],
+		"SNAPSHOT": "http://ow-maps.coastalresilience.org/Reports/Chuuk_PolicyBrief.pdf",
+		"query": {
+			"type": "SUB_JURISD",
+			"label": "Chuuk"
+		}
+	},
+	"Berry & Bimini Islands" : {
+		"EXTENT" : [150.551,7.021,152.438,7.750],
+		"SNAPSHOT": "http://ow-maps.coastalresilience.org/Reports/Chuuk_PolicyBrief.pdf",
+		"query": {
+			"type": "SUB_JURISD",
+			"label": "Chuuk"
+		}
+	},
+	"Cay Sal" : {
+		"EXTENT" : [150.551,7.021,152.438,7.750],
+		"SNAPSHOT": "http://ow-maps.coastalresilience.org/Reports/Chuuk_PolicyBrief.pdf",
+		"query": {
+			"type": "SUB_JURISD",
+			"label": "Chuuk"
+		}
+	},
+	"Eleuthra" : {
+		"EXTENT" : [150.551,7.021,152.438,7.750],
+		"SNAPSHOT": "http://ow-maps.coastalresilience.org/Reports/Chuuk_PolicyBrief.pdf",
+		"query": {
+			"type": "SUB_JURISD",
+			"label": "Chuuk"
+		}
+	},
+	"Exumas" : {
+		"EXTENT" : [150.551,7.021,152.438,7.750],
+		"SNAPSHOT": "http://ow-maps.coastalresilience.org/Reports/Chuuk_PolicyBrief.pdf",
+		"query": {
+			"type": "SUB_JURISD",
+			"label": "Chuuk"
+		}
+	},
+	"Inagua" : {
+		"EXTENT" : [150.551,7.021,152.438,7.750],
+		"SNAPSHOT": "http://ow-maps.coastalresilience.org/Reports/Chuuk_PolicyBrief.pdf",
+		"query": {
+			"type": "SUB_JURISD",
+			"label": "Chuuk"
+		}
+	},
+	"Little Bahama Bank" : {
+		"EXTENT" : [150.551,7.021,152.438,7.750],
+		"SNAPSHOT": "http://ow-maps.coastalresilience.org/Reports/Chuuk_PolicyBrief.pdf",
+		"query": {
+			"type": "SUB_JURISD",
+			"label": "Chuuk"
+		}
+	},
+	"Long & Ragged Islands" : {
+		"EXTENT" : [150.551,7.021,152.438,7.750],
+		"SNAPSHOT": "http://ow-maps.coastalresilience.org/Reports/Chuuk_PolicyBrief.pdf",
+		"query": {
+			"type": "SUB_JURISD",
+			"label": "Chuuk"
+		}
+	},
+	"New Providence" : {
+		"EXTENT" : [150.551,7.021,152.438,7.750],
+		"SNAPSHOT": "http://ow-maps.coastalresilience.org/Reports/Chuuk_PolicyBrief.pdf",
+		"query": {
+			"type": "SUB_JURISD",
+			"label": "Chuuk"
+		}
+	},
+	"SE Bahamas" : {
+		"EXTENT" : [150.551,7.021,152.438,7.750],
+		"SNAPSHOT": "http://ow-maps.coastalresilience.org/Reports/Chuuk_PolicyBrief.pdf",
+		"query": {
+			"type": "SUB_JURISD",
+			"label": "Chuuk"
+		}
 	}
 }

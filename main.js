@@ -71,8 +71,14 @@ define([
                 // Default Settings
                 this.state = new State();
                 this.region = this.state.getRegion();
+                this.subregion = this.state.getSubregion();
                 this.layerIDX = this.state.getLayerIDX();
                 this.layer = this.state.getLayer();
+
+                this.regions = _(this.data).chain().pluck('REGION').uniq().value();
+                this.subregions = _(this.data).chain().where({
+                    'REGION': this.region
+                }).pluck('SUBREGION').uniq().value();
 
                 this.bindEvents();
 
@@ -80,13 +86,13 @@ define([
                 this.chart.position = {};
                 this.chart.position.margin = {
                     top: 30,
-                    right: 30,
-                    left: 60,
-                    bottom: 40
+                    right: 15,
+                    left: 150,
+                    bottom: 70
                 };
                 this.chart.position.width = (this.width - 30) -
                     this.chart.position.margin.left - this.chart.position.margin.right;
-                this.chart.position.height = 275 - this.chart.position.margin.top -
+                this.chart.position.height = 285 - this.chart.position.margin.top -
                     this.chart.position.margin.bottom;
             },
 
@@ -95,21 +101,21 @@ define([
 
                 // Set event listeners.  We bind 'this' where needed so the event
                 // handler can access the full scope of the plugin
-                this.$el.on('mousedown', '.region-select', $.proxy(this.updateRegionText, this));
+                this.$el.on('mousedown', '.subregion-select', $.proxy(this.updateSubregionText, this));
                 this.$el.on('click', '.stat', function(e) {self.changeScenarioClick(e);});
                 this.$el.on('click', '.js-getSnapshot', $.proxy(this.printReport, this));
             },
 
             setState: function(data) {
                 this.state = new State(data);
-                this.region = data.region;
+                this.subregion = data.subregion;
                 this.layer = data.layer;
                 this.layerIDX = data.layerIDX;
             },
 
             getState: function() {
                 return {
-                    region: this.state.getRegion(),
+                    subregion: this.state.getSubregion(),
                     layer: this.state.getLayer(),
                     layerIDX: this.state.getLayerIDX(),
                 };
@@ -129,13 +135,13 @@ define([
             // minimized, it restores the plugin to it's previous state
             activate: function() {
                 var self = this;
-
                 this.render();
                 this.renderChart();
 
                 this.$el.prev('.sidebar-nav').find('.nav-title').css('margin-left', '25px');
 
                 this.region = this.state.getRegion();
+                this.subregion = this.state.getSubregion();
                 this.layer = this.state.getLayer();
                 this.layerIDX = this.state.getLayerIDX();
 
@@ -150,9 +156,10 @@ define([
                 this.$el.find('.stat[data-layer="' + this.layer + '"]').addClass('active');
 
                 // Restore state of region select
-                this.$el.find('#crf-select-region').val(this.region).trigger('chosen:updated');
+                this.$el.find('#crf-select-subregion').val(this.subregion).trigger('chosen:updated');
 
                 this.changeRegion();
+                this.changeSubregion();
 
                 this.changeScenario();
 
@@ -170,21 +177,35 @@ define([
             // We have some long labels that have shorter abbreviations.  This function resets all
             // the options to their long text versions.  This should fire everytime the select
             // list is about to open
-            updateRegionText: function(e) {
-                this.$el.find('.region-select option').each(function(idx, el) {
+            updateSubregionText: function(e) {
+                this.$el.find('.subregion-select option').each(function(idx, el) {
                     $(el).text($(el).data('text'));
                 });
             },
 
-            // Change the default region.  If global, zoom to the full extent and show data
-            // for all countries.  If regional, zoom to the country based on the bookmark in
-            // the extent-bookmarks.json file and hide data for all other countries
             changeRegion: function() {
-                var self = this;
-                this.region = this.$el.find('#crf-select-region').val();
-                this.state = this.state.setRegion(this.region);
+                var select = this.$el.find('#crf-select-subregion');
+                this.subregions = _(this.data).chain().where({
+                    'REGION': this.region
+                }).pluck('SUBREGION').uniq().value();
 
-                if (self.countryConfig[self.region].SNAPSHOT) {
+                select.html('');
+                _(this.subregions).each(function(subregion){
+                    select.append($('<option value="' + subregion + '">' + subregion + '</option>'));
+                });
+                select.trigger('chosen:updated');
+                this.changeSubregion();
+            },
+
+            // Change the default subregion.  If global, zoom to the full extent and show data
+            // for all countries.  If subregional, zoom to the country based on the bookmark in
+            // the extent-bookmarks.json file and hide data for all other countries
+            changeSubregion: function() {
+                var self = this;
+                this.subregion = this.$el.find('#crf-select-subregion').val();
+                this.state = this.state.setSubregion(this.subregion);
+
+                if (self.countryConfig[self.subregion].SNAPSHOT) {
                     this.$el.find('.js-getSnapshot').show();
                 } else {
                     this.$el.find('.js-getSnapshot').hide();
@@ -192,41 +213,46 @@ define([
 
                 this.setLayerDefinitions();
 
-                var regionExtent = this.countryConfig[this.region].EXTENT;
+                var subregionExtent = this.countryConfig[this.subregion].EXTENT;
                 var extent = new esri.geometry.Extent(
-                    regionExtent[0],
-                    regionExtent[1],
-                    regionExtent[2],
-                    regionExtent[3]
+                    subregionExtent[0],
+                    subregionExtent[1],
+                    subregionExtent[2],
+                    subregionExtent[3]
                 );
 
                 this.map.setExtent(extent);
 
-                var pressure = this.data[this.region].Fishing_Pressure_M1.mean;
-                var stock = this.data[this.region].Standing_Stock_M2.mean;
-                var predicted = this.data[this.region].Percent_Gain_M4.mean;
-                var recovery = this.data[this.region].Recovery_Years_M12.mean;
+                var datum = _(self.data).where({
+                    REGION: self.region,
+                    SUBREGION: this.subregion,
+                });
 
-                this.$el.find('.stat[data-layer="Fishing_Pressure_M1"] .variable').html(pressure);
-                this.$el.find('.stat[data-layer="Standing_Stock_M2"] .variable').html(stock);
-                this.$el.find('.stat[data-layer="Percent_Gain_M4"] .variable').html(predicted);
-                this.$el.find('.stat[data-layer="Recovery_Years_M12"] .variable').html(recovery);
+                var pressure = _(datum).find({PARAMETER: 'Fishing_Pressure'}).MEAN;
+                var stock = _(datum).find({PARAMETER: 'Standing_Stock'}).MEAN;
+                var predicted = _(datum).find({PARAMETER: 'Percent_Gain'}).MEAN;
+                var recovery = _(datum).find({PARAMETER: 'Recovery_Years'}).MEAN;
+
+                this.$el.find('.stat[data-layer="Fishing_Pressure"] .variable').html(pressure);
+                this.$el.find('.stat[data-layer="Standing_Stock"] .variable').html(stock);
+                this.$el.find('.stat[data-layer="Percent_Gain"] .variable').html(predicted);
+                this.$el.find('.stat[data-layer="Recovery_Years"] .variable').html(recovery);
 
                 this.updateChart();
 
                 ga('send', 'event', {
                     eventCategory: 'MAR',
                     eventAction: 'change region',
-                    eventLabel: this.region
+                    eventLabel: this.subregion
                 });
             },
 
             setLayerDefinitions: function() {
-                if (this.region === 'Micronesia') {
+                if (this.subregion === 'Micronesia') {
                     this.fisheriesLayer.setLayerDefinitions([]);
                 } else {
                     var layerDefs = [];
-                    var params = this.countryConfig[this.region].query;
+                    var params = this.countryConfig[this.subregion].query;
                     layerDefs[this.layerIDX] = params.type + '=\'' + params.label + '\'';
                     this.fisheriesLayer.setLayerDefinitions(layerDefs);
                 }
@@ -258,9 +284,14 @@ define([
 
             render: function() {
                 var self = this;
+                var subregions = _(this.data).chain().where({'REGION': this.region}).pluck('SUBREGION').uniq().value();
+                var selectedData = _(this.data).where({ SUBREGION: this.subregion });
+
                 var $el = $(this.pluginTmpl({
                     global: this.data.Micronesia,
-                    regions: this.data,
+                    regions: this.regions,
+                    subregions: subregions,
+                    selectedData: selectedData,
                     pane: this.app.paneNumber,
                     config: this.countryConfig,
                     units: this.unitStyleLookups
@@ -276,7 +307,9 @@ define([
                 // and add to appDiv
                 var idUpdate = this.pluginTmpl({
                     global: this.data.Micronesia,
-                    regions: this.data,
+                    regions: this.regions,
+                    subregions: subregions,
+                    selectedData: selectedData,
                     pane: this.app.paneNumber,
                     config: this.countryConfig,
                     units: this.unitStyleLookups}).replace(/id='/g, "id='" + this.id);
@@ -300,52 +333,46 @@ define([
                     disable_search_threshold: 20,
                     width: '160px'
                 }).on('change', function(e, params) {
+                    self.region = params.selected;
+                    self.changeRegion();
+                });
+
+                this.$el.find('#crf-select-subregion').chosen({
+                    disable_search_threshold: 20,
+                    width: '183px'
+                }).on('change', function(e, params) {
                     // Show abbreviation when label is set in the parameters
                     var label = self.countryConfig[params.selected].label;
                     if (label) {
-                        self.$el.find('.chosen-single span').html(label);
+                        self.$el.find('#crf-select-subregion + .chosen-container > .chosen-single span').html(label);
                     }
-                    self.changeRegion();
+                    self.changeSubregion();
                 });
             },
 
             // Render the D3 Chart
             renderChart: function() {
                 var self = this;
+                var countryCount = _(this.data).chain().where({'REGION': this.region}).pluck('SUBREGION').uniq().value().length;
+                this.chart.position.height = 140 + (countryCount * 20);
 
-                this.countryNames = [];
-                for (var country in this.data) {
-                    this.countryNames.push(country);
-                }
+                this.chart.y = d3.scale.ordinal()
+                    .domain(this.subregions)
+                    .rangeBands([0, this.chart.position.height - this.chart.position.margin.bottom], 0.7, 0.3);
 
-                var countrydata = Object.keys(this.data).map(function(a) {
-                    var country = {};
-                    country[a] = self.data[a];
-                    return country;
-                });
+                var xAxisMin = _(this.data).chain().where({
+                    REGION: self.region,
+                    PARAMETER: self.layer
+                }).map(function(a){return a.MIN;}).min().value();
 
-                this.chart.x = d3.scale.ordinal()
-                    .domain(this.countryNames)
-                    .rangeBands([0, this.chart.position.width], 0.7, 0.3);
+                var xAxisMax = _(this.data).chain().where({
+                    REGION: self.region,
+                    PARAMETER: self.layer
+                }).map(function(a){return a.MAX;}).max().value();
 
-                this.chart.y = d3.scale.linear()
-                    .domain([0, 1]) // TODO: Max and Min of whichever stat
-                    .range([this.chart.position.height - 20, 0]);
-
-                this.chart.xAxis = d3.svg.axis()
-                    .scale(this.chart.x)
-                    .tickFormat(function(d) {
-                        if (self.countryConfig[d].label) {
-                            return self.countryConfig[d].label;
-                        } else {
-                            return d;
-                        }
-                    })
-                    .orient('bottom');
-
-                this.chart.yAxis = d3.svg.axis()
-                    .scale(this.chart.y)
-                    .orient('left');
+                this.chart.x = d3.scale.linear()
+                    .domain([xAxisMin, xAxisMax])
+                    .range([0, this.chart.position.width - 20]);
 
                 var $chartContainer = this.$el.find('.chartContainer');
 
@@ -359,266 +386,329 @@ define([
                         .attr('transform', 'translate(' + this.chart.position.margin.left + ',' +
                                 this.chart.position.margin.right + ')');
 
-                // Add the xaxis
-                this.chart.svg.append('g')
-                    .attr('class', 'xaxis')
-                    .attr('transform', 'translate(0,' + (this.chart.position.height - 25) + ')')
-                    .call(this.chart.xAxis)
-                    .selectAll('line')
-                        .attr('x1', 8)
-                        .attr('x2', 8); //TODO: Dynamically figure out half-way point
+                this.chart.yAxis = d3.svg.axis()
+                    .scale(this.chart.y)
+                    .tickFormat(function(d) {
+                        if (self.countryConfig[d].label) {
+                            return self.countryConfig[d].label;
+                        } else {
+                            return d;
+                        }
+                    })
+                    .orient('left');
 
-                this.chart.svg.selectAll('.xaxis text')
-                        .attr('transform', 'rotate(-45)')
-                        .style('text-anchor', 'end');
+                this.chart.xAxis = d3.svg.axis()
+                    .scale(this.chart.x)
+                    .ticks(5)
+                    .orient('bottom');
 
                 this.chart.svg.append('g')
                     .attr('class', 'yaxis')
                     .call(this.chart.yAxis);
 
-                // Add the y-axis label
-                this.yAxisLabel = this.chart.svg.append('text')
-                    .attr('class', 'yaxis-label')
-                    .attr('transform', 'rotate(-90)')
-                    .attr('y', 0 - this.chart.position.margin.left + 20)
-                    .attr('x', 0 - (this.chart.position.height / 2))
+                // Add the xaxis
+                this.chart.svg.append('g')
+                    .attr('class', 'xaxis')
+                    .call(this.chart.xAxis);
+
+                this.xAxisLabel = this.chart.svg.append('text')
+                    .attr('class', 'xaxis-label')
+                    .attr('y', 0 + this.chart.position.height - 20)
+                    .attr('x', 50)
                     .attr('text-anchor', 'middle');
 
                 this.chart.chartData = this.chart.svg.append('g')
                     .attr('class', 'chart-data')
                     .attr('transform', 'translate(0,0)');
 
-                this.chart.plots = this.chart.chartData.selectAll('.box')
-                    .data(this.countryNames)
-                    .enter().append('g')
-                    .attr('data-country', function(d) {
-                        return d;
-                    })
-                    .attr('class', 'box info-tooltip');
+                /*this.allCountryNames = _(this.data).chain().pluck('SUBREGION').uniq().value();
+                this.visibleCountryNames = _(this.data).chain().where({'REGION': this.region}).pluck('SUBREGION').uniq().value();
 
-                // whiskers
-                this.chart.whiskers = this.chart.plots.append('line')
-                    .attr('class', 'whisker')
-                    .attr('stroke-width', 1)
-                    .attr('stroke', 'black')
-                    .attr('stroke-dasharray', '3,3')
-                    .attr('x1', function(d) {
-                        return self.chart.x(d) + ((self.chart.position.width /
-                                self.countryNames.length) * 0.4);
-                    })
-                    .attr('x2', function(d) {
-                        return self.chart.x(d) + ((self.chart.position.width /
-                                self.countryNames.length) * 0.4);
-                    })
-                    .attr('y1', function(d) {
-                        return self.chart.y(self.data[d][self.layer].max);
-                    })
-                    .attr('y2', function(d) {
-                        return self.chart.y(self.data[d][self.layer].min);
-                    });
 
-                // Max lines
-                this.chart.maxline = this.chart.plots.append('line')
-                    .attr('class', 'maxline')
-                    .attr('stroke-width', 1)
-                    .attr('stroke', 'black')
-                    .attr('x1', function(d) {
-                        return self.chart.x(d);
-                    })
-                    .attr('x2', function(d) {
-                        return self.chart.x(d) + ((self.chart.position.width /
-                            self.countryNames.length) * 0.8);
-                    })
-                    .attr('y1', function(d) {
-                        return self.chart.y(self.data[d][self.layer].max);
-                    })
-                    .attr('y2', function(d) {
-                        return self.chart.y(self.data[d][self.layer].max);
-                    });
 
-                // Min lines
-                this.chart.minline = this.chart.plots.append('line')
-                    .attr('class', 'minline')
-                    .attr('stroke-width', 1)
-                    .attr('stroke', 'black')
-                    .attr('x1', function(d) {
-                        return self.chart.x(d);
-                    })
-                    .attr('x2', function(d) {
-                        return self.chart.x(d) + ((self.chart.position.width /
-                            self.countryNames.length) * 0.8);
-                    })
-                    .attr('y1', function(d) {
-                        return self.chart.y(self.data[d][self.layer].min);
-                    })
-                    .attr('y2', function(d) {
-                        return self.chart.y(self.data[d][self.layer].min);
-                    });
-
-                // Boxes
-                this.chart.box = this.chart.plots.append('rect')
-                    .attr('y', function(d) {
-                        return self.chart.y(self.data[d][self.layer].q75);
-                    })
-                    .attr('height', function(d) {
-                        return self.chart.y(self.data[d][self.layer].q25) -
-                            self.chart.y(self.data[d][self.layer].q75);
-                    })
-                    .attr('x', function(d) {
-                        return self.chart.x(d);
-                    })
-                    .attr('fill', function(d) {
-                        if (d === self.region) {
-                            return 'steelblue';
-                        } else {
-                            return 'olivedrab';
-                        }
-                    })
-                    .attr('width', (self.chart.position.width / self.countryNames.length) -
-                        ((self.chart.position.width / self.countryNames.length) * 0.2)) // 20% gap
                     .attr('cursor', 'pointer')
                     .on('click', function(d) {
-                        self.$el.find('#crf-select-region').val(d).trigger('chosen:updated');
+                        self.$el.find('#crf-select-subregion').val(d).trigger('chosen:updated');
                         var label = self.countryConfig[d].label;
                         if (label) {
                             self.$el.find('.chosen-single span').html(label);
                         }
-                        self.changeRegion();
+                        self.changeSubregion();
                     });
 
-                // median lines
-                this.medianline = this.chart.plots.append('line')
-                    .attr('class', 'median')
-                    .attr('x1', function(d) {
-                        return self.chart.x(d);
-                    })
-                    .attr('x2', function(d) {
-                        return self.chart.x(d) + ((self.chart.position.width /
-                            self.countryNames.length) * 0.8);
-                    })
-                    .attr('y1', function(d) {
-                        return self.chart.y(self.data[d][self.layer].median);
-                    })
-                    .attr('y2', function(d) {
-                        return self.chart.y(self.data[d][self.layer].median);
-                    })
-                    .attr('stroke-width', 1)
-                    .attr('stroke', 'black');
-
+                
+*/
             },
 
             // Set the chart data to match the current variable
             updateChart: function() {
                 var self = this;
+                var visibleCountryNames = _(this.data).chain().where({'REGION': this.region}).pluck('SUBREGION').uniq().value();
+                var countryCount = _(this.data).chain().where({'REGION': this.region}).pluck('SUBREGION').uniq().value().length;
+                this.chart.position.height = 140 + (countryCount * 20);
 
-                var min = _.min(this.data, function(d) {
-                    return d[self.layer].min;
-                })[self.layer].min;
+                // Resize the height of the chart to fit the number of sub-regions
+                d3.selectAll(this.$el.find('.chartContainer').toArray()).select('svg')
+                    .attr('height', this.chart.position.height);
 
-                var maxArray = [];
-                _.each(this.data, function(d) {
-                    maxArray.push(parseFloat(d[self.layer].max));
-                });
+                var unit = _(this.data).find({
+                    REGION: this.region,
+                    PARAMETER: this.layer
+                }).UNIT;
 
-                var minArray = [];
-                _.each(this.data, function(d) {
-                    minArray.push(parseFloat(d[self.layer].min));
-                });
+                var xAxisMin = _(this.data).chain().where({
+                    REGION: self.region,
+                    PARAMETER: self.layer
+                }).map(function(a){return a.MIN;}).min().value();
+
+                var xAxisMax = _(this.data).chain().where({
+                    REGION: self.region,
+                    PARAMETER: self.layer
+                }).map(function(a){return a.MAX;}).max().value();
+
+                this.chart.x
+                    .domain([xAxisMin, xAxisMax]);
+
+                this.xAxisLabel
+                    .text(this.$el.find('.stat.active .description').text() +
+                        '(' + unit + ')')
+                    .transition().duration(1000)
+                    .attr('y', 0 + this.chart.position.height - 20);
 
                 this.chart.y
-                    // TODO: Max and Min of whichever stat
-                    .domain([d3.min(minArray), d3.max(maxArray)]);
+                    .domain(this.subregions)
+                    .rangeBands([0, this.chart.position.height - this.chart.position.margin.bottom], 0.4);
 
-                this.yAxisLabel
-                    .text(this.$el.find('.stat.active .description').text() +
-                        '(' + this.data[this.region][this.layer].unit + ')');
+                this.chart.svg.selectAll('.xaxis')
+                    .attr('transform', 'translate(0,' + (this.chart.position.height - 70) + ')')
+                    .call(this.chart.xAxis);
 
                 this.chart.svg.selectAll('.yaxis')
                     .transition().duration(1000)
                     .call(this.chart.yAxis);
 
-                // Plots
-                this.chart.plots
-                    .attr('title', function(d) {
-                        var html = '';
-                        html += 'max: ' + self.data[d][self.layer].max;
-                        html += '\nthird quartile: ' + self.data[d][self.layer].q75;
-                        html += '\nmedian: ' + self.data[d][self.layer].median;
-                        html += '\nsecond quartile: ' + self.data[d][self.layer].q25;
-                        html += '\nmin: ' + self.data[d][self.layer].min;
-                        return html;
+                // Change datasets
+
+                var boxes = this.chart.chartData.selectAll('.box')
+                    .data(visibleCountryNames, function(d){
+                        return d;
                     });
 
-                // Boxes
-                this.chart.box = this.chart.plots.selectAll('rect')
-                    .transition().duration(1000)
-                    .attr('y', function(d) {
-                        return self.chart.y(self.data[d][self.layer].q75);
+                boxes.exit().remove();
+
+                boxes = boxes.enter().append('g')
+                    .attr('data-country', function(d) {
+                        return d;
                     })
-                    .attr('height', function(d) {
-                        return self.chart.y(self.data[d][self.layer].q25) -
-                            self.chart.y(self.data[d][self.layer].q75);
+                    .attr('class', 'box info-tooltip')
+                    .on('click', function(d) {
+                        self.$el.find('#crf-select-subregion').val(d).trigger('chosen:updated');
+                        var label = self.countryConfig[d].label;
+                        if (label) {
+                            self.$el.find('#crf_select_subregion_chosen .chosen-single span').html(label);
+                        }
+                        self.changeSubregion();
+                    });
+
+                boxes.append('line')
+                    .attr('class', 'whisker')
+                    .attr('stroke-width', 1)
+                    .attr('stroke', 'black')
+                    .attr('stroke-dasharray', '3,3');
+
+                boxes.append('line')
+                    .attr('class', 'maxline')
+                    .attr('stroke-width', 1)
+                    .attr('stroke', 'black');
+
+                boxes.append('line')
+                    .attr('class', 'minline')
+                    .attr('stroke-width', 1)
+                    .attr('stroke', 'black');
+
+                boxes.append('rect')
+                    .attr('fill', 'olivedrab')
+                    .attr('height', 20)
+                    .attr('cursor', 'pointer');
+       
+                boxes.append('line')
+                    .attr('class', 'median')
+                    .attr('stroke-width', 1)
+                    .attr('stroke', 'black');
+
+                // Whiskers
+                this.chart.chartData.selectAll('.whisker')
+                    .transition().duration(1000)
+                    .attr('y1', function(d, i) {
+                        if (!self.chart.y(d)) {
+                            return 0;
+                        }
+                        return self.chart.y(d) + 8;
+                    })
+                    .attr('y2', function(d) {
+                        if (!self.chart.y(d)) {
+                            return 0;
+                        }
+                        return self.chart.y(d) + 8;
+                    })
+                    .attr('x1', function(d) {
+                        var datum = _(self.data).find({
+                            SUBREGION: d,
+                            PARAMETER: self.layer
+                        }).MAX;
+                        return self.chart.x(datum);
+                    })
+                    .attr('x2', function(d) {
+                        var datum = _(self.data).find({
+                            SUBREGION: d,
+                            PARAMETER: self.layer
+                        }).MIN;
+                        return self.chart.x(datum);
+                    });
+
+
+                this.chart.chartData.selectAll('.maxline')
+                    .transition().duration(1000)
+                    .attr('y1', function(d) {
+                        if (!self.chart.y(d)) {
+                            return 0;
+                        }
+                        return self.chart.y(d);
+                    })
+                    .attr('y2', function(d) {
+                        if (!self.chart.y(d)) {
+                            return 0;
+                        }
+                        return self.chart.y(d) + 20;
+                    })
+                    .attr('x1', function(d) {
+                        var datum = _(self.data).find({
+                            SUBREGION: d,
+                            PARAMETER: self.layer
+                        }).MAX;
+                        return self.chart.x(datum);
+                    })
+                    .attr('x2', function(d) {
+                        var datum = _(self.data).find({
+                            SUBREGION: d,
+                            PARAMETER: self.layer
+                        }).MAX;
+                        return self.chart.x(datum);
+                    });
+
+                this.chart.chartData.selectAll('.minline')
+                    .transition().duration(1000)
+                    .attr('y1', function(d) {
+                        if (!self.chart.y(d)) {
+                            return 0;
+                        }
+                        return self.chart.y(d);
+                    })
+                    .attr('y2', function(d) {
+                        if (!self.chart.y(d)) {
+                            return 0;
+                        }
+                        return self.chart.y(d) + 20;
+                    })
+                    .attr('x1', function(d) {
+                        var datum = _(self.data).find({
+                            SUBREGION: d,
+                            PARAMETER: self.layer
+                        }).MIN;
+                        return self.chart.x(datum);
+                    })
+                    .attr('x2', function(d) {
+                        var datum = _(self.data).find({
+                            SUBREGION: d,
+                            PARAMETER: self.layer
+                        }).MIN;
+                        return self.chart.x(datum);
+                    });
+                
+                // Boxes
+
+                this.chart.chartData.selectAll('rect')
+                    .transition().duration(1000)
+                    .attr('x', function(d) {
+                        var q25 = _(self.data).find({
+                            SUBREGION: d,
+                            PARAMETER: self.layer
+                        }).Q25;
+                        return self.chart.x(q25);
+                    })
+                    .attr('y', function(d) {
+                        return self.chart.y(d);
+                    })
+                    .attr('width', function(d) {
+                        var q75 = _(self.data).find({
+                            SUBREGION: d,
+                            PARAMETER: self.layer
+                        }).Q75;
+
+                        var q25 = _(self.data).find({
+                            SUBREGION: d,
+                            PARAMETER: self.layer
+                        }).Q25;
+                        return self.chart.x(q75) - self.chart.x(q25);
                     })
                     .attr('fill', function(d) {
-                        if (d === self.region) {
+                        if (d === self.subregion) {
                             return 'steelblue';
                         } else {
                             return 'olivedrab';
                         }
+                    })
+                    
+                    .attr('title', function(d) {
+                        var datum = _(self.data).find({
+                            REGION: self.region,
+                            SUBREGION: d,
+                            PARAMETER: self.layer
+                        });
+
+                        var html = '';
+                        html += 'max: ' + datum.MAX;
+                        html += '\nthird quartile: ' + datum.Q75;
+                        html += '\nmedian: ' + datum.MEDIAN;
+                        html += '\nsecond quartile: ' + datum.Q25;
+                        html += '\nmin: ' + datum.MIN;
+                        return html;
                     });
 
-                // Whiskers
-                this.chart.whiskers
+                // median lines
+                this.chart.chartData.selectAll('.median')
                     .transition().duration(1000)
+                    .attr('y1', function(d) {
+                        if (!self.chart.y(d)) {
+                            return 0;
+                        }
+                        return self.chart.y(d) + 1;
+                    })
+                    .attr('y2', function(d) {
+                        if (!self.chart.y(d)) {
+                            return 0;
+                        }
+                        return self.chart.y(d) + 19;
+                    })
                     .attr('x1', function(d) {
-                        return self.chart.x(d) + ((self.chart.position.width /
-                            self.countryNames.length) * 0.4);
+                        var median = _(self.data).find({
+                            SUBREGION: d,
+                            PARAMETER: self.layer
+                        }).MEDIAN;
+                        return self.chart.x(median);
                     })
                     .attr('x2', function(d) {
-                        return self.chart.x(d) + ((self.chart.position.width /
-                            self.countryNames.length) * 0.4);
-                    })
-                    .attr('y1', function(d) {
-                        return self.chart.y(self.data[d][self.layer].max);
-                    })
-                    .attr('y2', function(d) {
-                        return self.chart.y(self.data[d][self.layer].min);
-                    });
-
-                // Max lines
-                this.chart.maxline
-                    .transition().duration(1000)
-                    .attr('y1', function(d) {
-                        return self.chart.y(self.data[d][self.layer].max);
-                    })
-                    .attr('y2', function(d) {
-                        return self.chart.y(self.data[d][self.layer].max);
-                    });
-
-                // Min lines
-                this.chart.minline
-                    .transition().duration(1000)
-                    .attr('y1', function(d) {
-                        return self.chart.y(self.data[d][self.layer].min);
-                    })
-                    .attr('y2', function(d) {
-                        return self.chart.y(self.data[d][self.layer].min);
-                    });
-
-                // Median Lines
-                this.medianline
-                    .transition().duration(1000)
-                    .attr('y1', function(d) {
-                        return self.chart.y(self.data[d][self.layer].median);
-                    })
-                    .attr('y2', function(d) {
-                        return self.chart.y(self.data[d][self.layer].median);
+                        var median = _(self.data).find({
+                            SUBREGION: d,
+                            PARAMETER: self.layer
+                        }).MEDIAN;
+                        return self.chart.x(median);
                     });
             },
 
-            // Download the pdf report for the current region
+            // Download the pdf report for the current subregion
             printReport: function() {
-                window.open(this.countryConfig[this.region].SNAPSHOT, '_blank');
+                window.open(this.countryConfig[this.subregion].SNAPSHOT, '_blank');
                 return false;
             },
 
