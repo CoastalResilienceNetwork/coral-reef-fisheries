@@ -44,7 +44,7 @@ define([
               CountryConfig
 ) {
         return declare(PluginBase, {
-            toolbarName: 'Micronesia Fisheries',
+            toolbarName: 'Fisheries',
             fullName: 'Configure and control layers to be overlayed on the base map.',
             resizable: false,
             width: 425,
