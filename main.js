@@ -162,11 +162,6 @@ define([
                 this.changeSubregion();
 
                 this.changeScenario();
-
-                this.$el.find('.info-tooltip').tooltip({
-                    tooltipClass: 'plugin-tooltip',
-                    track: true,
-                });
             },
 
             // format a number with commas
@@ -674,6 +669,11 @@ define([
                         html += '\nmin: ' + datum.MIN;
                         return html;
                     });
+
+                this.$el.find('.info-tooltip').tooltip({
+                    tooltipClass: 'plugin-tooltip',
+                    track: true,
+                });
 
                 // median lines
                 this.chart.chartData.selectAll('.median')
