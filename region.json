@@ -1,0 +1,4 @@
+{
+	"service": "http://dev.services.coastalresilience.org/arcgis/rest/services/OceanWealth/Coral_Reef_Fisheries/MapServer",
+	"data_layer": 14
+}
