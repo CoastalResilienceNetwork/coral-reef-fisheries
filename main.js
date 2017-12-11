@@ -62,6 +62,7 @@ define([
 
             initialize: function(frameworkParameters, currentRegion) {
                 declare.safeMixin(this, frameworkParameters);
+
                 this.data = $.parseJSON(Data);
                 this.countryConfig = $.parseJSON(CountryConfig);
                 this.pluginTmpl = _.template(this.getTemplateById('plugin'));
@@ -395,10 +396,11 @@ define([
                 this.chart.xAxis = d3.svg.axis()
                     .scale(this.chart.x)
                     .ticks(5)
-                    .orient('bottom');
+                    .orient('top');
 
                 this.chart.svg.append('g')
                     .attr('class', 'yaxis')
+                    .attr('transform', 'translate(-3, 45)')
                     .call(this.chart.yAxis);
 
                 // Add the xaxis
@@ -408,13 +410,13 @@ define([
 
                 this.xAxisLabel = this.chart.svg.append('text')
                     .attr('class', 'xaxis-label')
-                    .attr('y', 0 + this.chart.position.height - 20)
+                    .attr('y', 0)
                     .attr('x', 50)
                     .attr('text-anchor', 'middle');
 
                 this.chart.chartData = this.chart.svg.append('g')
                     .attr('class', 'chart-data')
-                    .attr('transform', 'translate(0,0)');
+                    .attr('transform', 'translate(0,45)');
 
                 /*this.allCountryNames = _(this.data).chain().pluck('SUBREGION').uniq().value();
                 this.visibleCountryNames = _(this.data).chain().where({'REGION': this.region}).pluck('SUBREGION').uniq().value();
@@ -467,15 +469,14 @@ define([
                 this.xAxisLabel
                     .text(this.$el.find('.stat.active .description').text() +
                         '(' + unit + ')')
-                    .transition().duration(1000)
-                    .attr('y', 0 + this.chart.position.height - 20);
+                    .transition().duration(1000);
 
                 this.chart.y
                     .domain(this.subregions)
                     .rangeBands([0, this.chart.position.height - this.chart.position.margin.bottom], 0.4);
 
                 this.chart.svg.selectAll('.xaxis')
-                    .attr('transform', 'translate(0,' + (this.chart.position.height - 70) + ')')
+                    .attr('transform', 'translate(0, 40)')
                     .call(this.chart.xAxis);
 
                 this.chart.svg.selectAll('.yaxis')
