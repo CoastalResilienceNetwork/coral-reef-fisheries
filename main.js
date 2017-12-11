@@ -18,13 +18,15 @@ define([
     'esri/renderers/ClassBreaksRenderer',
     'esri/symbols/SimpleLineSymbol',
     'esri/renderer',
+    'esri/tasks/query',
+    'esri/tasks/QueryTask',
     'dijit/layout/ContentPane',
     'dojo/dom',
     'esri/Color',
     'dijit/Tooltip',
     './State',
     'dojo/text!./template.html',
-    'dojo/text!./data.json',
+    'dojo/text!./region.json',
     'dojo/text!./country-config.json'
     ], function(declare,
               d3,
@@ -34,13 +36,15 @@ define([
               ClassBreaksRenderer,
               SimpleLineSymbol,
               Renderer,
+              Query,
+              QueryTask,
               ContentPane,
               dom,
               Color,
               Tooltip,
               State,
               templates,
-              Data,
+              RegionConfig,
               CountryConfig
 ) {
         return declare(PluginBase, {
@@ -62,8 +66,17 @@ define([
 
             initialize: function(frameworkParameters, currentRegion) {
                 declare.safeMixin(this, frameworkParameters);
+                this.regionConfig = $.parseJSON(RegionConfig);             
+                
+                var query = new Query();
+                var queryTask = new QueryTask(this.regionConfig.service + '/' + this.regionConfig.data_layer);
+                this.$el = $(this.container);
 
-                this.data = $.parseJSON(Data);
+                query.where = '1=1';
+                query.returnGeometry = false;
+                query.outFields = ['*'];
+                queryTask.execute(query, _.bind(this.processData, this));
+
                 this.countryConfig = $.parseJSON(CountryConfig);
                 this.pluginTmpl = _.template(this.getTemplateById('plugin'));
 
@@ -74,12 +87,10 @@ define([
                 this.region = this.state.getRegion();
                 this.subregion = this.state.getSubregion();
                 this.layerIDX = this.state.getLayerIDX();
+                this.layerBahamasIDX = this.state.getLayerBahamasIDX();
+                this.layerMicronesiaIDX = this.state.getLayerMicronesiaIDX();
                 this.layer = this.state.getLayer();
 
-                this.regions = _(this.data).chain().pluck('REGION').uniq().value();
-                this.subregions = _(this.data).chain().where({
-                    'REGION': this.region
-                }).pluck('SUBREGION').uniq().value();
 
                 this.bindEvents();
 
@@ -97,6 +108,18 @@ define([
                     this.chart.position.margin.bottom;
             },
 
+            processData: function(data) {
+                var transformedData = [];
+                $.each(data.features, function(idx, datum) {
+                    transformedData.push(datum.attributes);
+                });
+                this.data = transformedData;
+                this.regions = _(this.data).chain().pluck('REGION').uniq().value();
+                this.subregions = _(this.data).chain().where({
+                    'REGION': this.region
+                }).pluck('SUBREGION').uniq().value();
+            },
+
             bindEvents: function() {
                 var self = this;
 
@@ -112,6 +135,8 @@ define([
                 this.subregion = data.subregion;
                 this.layer = data.layer;
                 this.layerIDX = data.layerIDX;
+                this.layerBahamasIDX = data.layerBahamasIDX;
+                this.layerMicronesiaIDX = data.layerMicronesiaIDX;
             },
 
             getState: function() {
@@ -119,6 +144,8 @@ define([
                     subregion: this.state.getSubregion(),
                     layer: this.state.getLayer(),
                     layerIDX: this.state.getLayerIDX(),
+                    layerBahamasIDX: this.state.getlayerBahamasIDX(),
+                    layerMicronesiaIDX: this.state.getlayerMicronesiaIDX()
                 };
             },
 
@@ -126,7 +153,7 @@ define([
             // has been closed (not minimized). It sets up the layers with their default settings
 
             firstLoad: function() {
-                this.fisheriesLayer = new ArcGISDynamicMapServiceLayer('http://services.coastalresilience.org/arcgis/rest/services/OceanWealth/Coral_Reef_Fisheries/MapServer', {});
+                this.fisheriesLayer = new ArcGISDynamicMapServiceLayer(this.regionConfig.service, {});
                 this.fisheriesLayer.setVisibleLayers([this.layerIDX]);
 
                 this.map.addLayer(this.fisheriesLayer);
@@ -136,15 +163,17 @@ define([
             // minimized, it restores the plugin to it's previous state
             activate: function() {
                 var self = this;
+                this.$el.prev('.sidebar-nav').find('.nav-title').css('margin-left', '25px');
+
                 this.render();
                 this.renderChart();
-
-                this.$el.prev('.sidebar-nav').find('.nav-title').css('margin-left', '25px');
 
                 this.region = this.state.getRegion();
                 this.subregion = this.state.getSubregion();
                 this.layer = this.state.getLayer();
                 this.layerIDX = this.state.getLayerIDX();
+                this.layerBahamasIDX = this.state.getLayerBahamasIDX();
+                this.layerMicronesiaIDX = this.state.getLayerMicronesiaIDX();
 
                 // If the plugin hasn't been opened, or if it was closed (not-minimized)
                 // run the firstLoad function and reset the default variables
@@ -244,12 +273,17 @@ define([
             },
 
             setLayerDefinitions: function() {
-                if (this.subregion === 'Micronesia') {
+                if (this.subregion === 'Micronesia' || this.subregion === 'Bahamas') {
+                    this.layerIDX = this.region === 'Micronesia' ? this.layerMicronesiaIDX : this.layerBahamasIDX;
+                    this.fisheriesLayer.setVisibleLayers([this.layerIDX]);
                     this.fisheriesLayer.setLayerDefinitions([]);
                 } else {
                     var layerDefs = [];
                     var params = this.countryConfig[this.subregion].query;
+                    this.layerIDX = this.region === 'Micronesia' ? this.layerMicronesiaIDX : this.layerBahamasIDX;
+                    this.fisheriesLayer.setVisibleLayers([this.layerIDX]);
                     layerDefs[this.layerIDX] = params.type + '=\'' + params.label + '\'';
+
                     this.fisheriesLayer.setLayerDefinitions(layerDefs);
                 }
             },
@@ -258,7 +292,9 @@ define([
             // changeScenario function
             changeScenarioClick: function(e) {
                 this.layer = $(e.currentTarget).closest('.stat').data('layer');
-                this.layerIDX = $(e.currentTarget).closest('.stat').data('layer-idx');
+                this.layerBahamasIDX = $(e.currentTarget).closest('.stat').data('layer-bahamas-idx');
+                this.layerMicronesiaIDX = $(e.currentTarget).closest('.stat').data('layer-micronesia-idx');
+                this.layerIDX = this.region === 'Micronesia' ? this.layerMicronesiaIDX : this.layerBahamasIDX;
 
                 this.setLayerDefinitions();
                 this.changeScenario();
@@ -268,10 +304,10 @@ define([
             changeScenario: function() {
                 this.$el.find('.stat.active').removeClass('active');
                 this.$el.find('.stat[data-layer="' + this.layer + '"]').addClass('active');
-
-                this.fisheriesLayer.setVisibleLayers([this.layerIDX]);
+                this.layerIDX = this.region === 'Micronesia' ? this.layerMicronesiaIDX : this.layerBahamasIDX;
+                this.fisheriesLayer.setVisibleLayers([this.region === 'Micronesia' ? this.layerMicronesiaIDX : this.layerBahamasIDX]);
                 this.state = this.state.setLayer(this.layer);
-                this.state = this.state.setLayerIDX(this.layerIDX);
+                this.state = this.state.setLayerIDX(this.region === 'Micronesia' ? this.layerMicronesiaIDX : this.layerBahamasIDX);
 
                 this.updateChart();
             },
