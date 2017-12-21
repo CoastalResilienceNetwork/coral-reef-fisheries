@@ -29,7 +29,25 @@
 	}
 
 	section.region {
+		display: flex;
+		flex-flow: row wrap;
 	    padding: 10px;
+	}
+
+	section.region .col {
+		display: flex;
+	    flex-direction: column;
+	    flex-basis: 50%;
+	}
+
+	section.region .row {
+		margin-top: 10px;
+    	margin-left: auto;
+    	flex-basis: 50%;
+	}
+
+	section.region button {
+		width: 184px;
 	}
 
 	section.header {
@@ -175,7 +193,7 @@
 	}
     
     .micronesia-plugin .stats-description {
-    	padding: 20px 8px;
+    	padding: 0 8px 20px;
 	    font-size: 14px;
 	    text-align: left;
 	    line-height: 17px;
@@ -303,65 +321,80 @@
 	    </section>
 
 	    <section class="region">
-	    	<span class="control-title">Region:</span>
-
-
-	    	<div class="chosen-wrap" style="width: 160px; display: inline-block;">
-				<select id="crf-select-region" class="chosen">
-					<option value="Micronesia" selected>Micronesia</option>
-	    			<% _.each(regions, function(val, key) { if (key !== "Micronesia") { %>
-	    				<option value="<%= key %>"><%= key %></option>
-	    			<% }}); %>
-				</select>
+	    	<div class="col">
+		    	<span class="control-title">Region:</span>
+		    	<div class="chosen-wrap">
+					<select id="crf-select-region" class="chosen">
+		    			<% _.each(regions, function(region) { %>
+		    				<option value="<%= region %>"><%= region %></option>
+		    			<% }); %>
+					</select>
+				</div>
 			</div>
 
-			<button class="button button-default js-getSnapshot" target="_blank" style="display: none; float: right;">Download Policy Brief <i class="fa fa-file-pdf-o" aria-hidden="true"></i></button>
-	    	
-	    	<a href="http://ow-maps.coastalresilience.org/Reports/TNC%20final%20technical%20report%20v1.1.pdf" target="_blank">
-				<button class="button button-primary" style="color: #fff; float: right; clear: both;">Download Full Technical Report</button>
-			</a>
+			<div class="col">
+				<span class="control-title">Sub-Region:</span>
+				<div class="chosen-wrap">
+					<select id="crf-select-subregion" class="chosen">
+		    			<% _.each(subregions, function(subregion) { %>
+		    				<option value="<%= subregion %>"><%= subregion %></option>
+		    			<% }); %>
+					</select>
+				</div>
+			</div>
+
+			<div class="row">
+				<button class="button button-primary js-getSnapshot" target="_blank" style="display: none;">Download Policy Brief <i class="fa fa-file-pdf-o" aria-hidden="true"></i></button>
+		    	
+		    	<a href="http://ow-maps.coastalresilience.org/Reports/TNC%20final%20technical%20report%20v1.1.pdf" target="_blank">
+					<button class="button button-primary" style="color: #fff;">Download Full Technical Report</button>
+				</a>
+			</div>
 
 	    </section>
 
 	    <div class="stats-description">
-	    These summary statistics represent the MEAN values for each parameter summarized by the selected region. Click the statistics below to change the map and graph.</div>
-	    <div class="stats-container">
+		    These summary statistics represent the MEAN values for each parameter summarized by the selected region. Click the statistics below to change the map and graph.
+		</div>
 
-	    	<div class="stat active" data-layer-idx="3" data-layer="Fishing_Pressure_M1">
-	    		<div class="number"><span class="variable"><%= global.Fishing_Pressure_M1.mean %></span> <span class="units"><%= units[global.Fishing_Pressure_M1.unit] %></span></div>
-	    		<span class="description">Est. Cumulative Fishing Pressure
-	    			<i title="Estimated current fishing pressure on coral reef fisheries using the impact on size of parrotfish scaled from 0 (No fishing) to 1 (Highest fishing in region)" class="fa fa-info-circle info-tooltip"></i></span>
-	    	</div>
 
-	    	<div class="stat" data-layer-idx="4" data-layer="Standing_Stock_M2">
-	    		<div class="number"><span class="variable"><%= global.Standing_Stock_M2.mean %></span> <span class="units"><%= units[global.Standing_Stock_M2.unit] %></span></div>
-	    		<span class="description"> Current Standing Stock
-	    			<i title="Predicted current biomass 19 key coral reef fishery species including, Orange-spine surgeonfish, Blue-spine unicornfish, Bluefin trevally, Chub or drummer, Humphead wrasse, Orange-striped emperor, Longface emperor, Two-spot red snapper, Humpback red snapper, Bicolour parrotfish, Steephead parrotfish, Bullethead parrotfish, Pacific longnose parrotfish, Redlip parrotfish, Brown-marbled grouper, Camouflage grouper, Black-saddled coral grouper, Forktail rabbitfish, and Gold-spotted rabbitfish." class="fa fa-info-circle info-tooltip"></i></span>
-	    		
-	    	</div>
+		<div class="stats-container">
 
-	    	<div class="stat" data-layer-idx="5" data-layer="Percent_Gain_M4">
-	    		<div class="number"><span class="variable"><%= global.Percent_Gain_M4.mean %></span> <span class="units"><%= units[global.Percent_Gain_M4.unit] %></span></div>
-	    		<span class="description">Predicted Gain Standing Stock
-	    			<i title="The expected percent increase in fish stocks if fishing were reduced to 0 in each 1 HA cell. This could be through a marine reserve or some other fisheries management measure." class="fa fa-info-circle info-tooltip"></i></span>
+			<div class="stat active" data-layer-bahamas-idx="9" data-layer-micronesia-idx="3" data-layer="Fishing_Pressure">
+				<div class="number"><span class="variable"><%= _(selectedData).find({PARAMETER: 'Fishing_Pressure'}).MEAN %></span> <span class="units"><%= units[_(selectedData).find({PARAMETER: 'Fishing_Pressure'}).UNIT] %></span></div>
+				<span class="description">Est. Cumulative Fishing Pressure
+					<i title="Estimated current fishing pressure on coral reef fisheries using the impact on size of parrotfish scaled from 0 (No fishing) to 1 (Highest fishing in region)" class="fa fa-info-circle info-tooltip"></i></span>
+			</div>
 
-	    	</div>
+			<div class="stat" data-layer-bahamas-idx="10" data-layer-micronesia-idx="4" data-layer="Standing_Stock">
+				<div class="number"><span class="variable"><%= _(selectedData).find({PARAMETER: 'Standing_Stock'}).MEAN %></span> <span class="units"><%= units[_(selectedData).find({PARAMETER: 'Standing_Stock'}).UNIT] %></span></div>
+				<span class="description"> Current Standing Stock
+					<i title="Predicted current biomass 19 key coral reef fishery species including, Orange-spine surgeonfish, Blue-spine unicornfish, Bluefin trevally, Chub or drummer, Humphead wrasse, Orange-striped emperor, Longface emperor, Two-spot red snapper, Humpback red snapper, Bicolour parrotfish, Steephead parrotfish, Bullethead parrotfish, Pacific longnose parrotfish, Redlip parrotfish, Brown-marbled grouper, Camouflage grouper, Black-saddled coral grouper, Forktail rabbitfish, and Gold-spotted rabbitfish." class="fa fa-info-circle info-tooltip"></i></span>
+				
+			</div>
 
-	    	<div class="stat" data-layer-idx="7" data-layer="Recovery_Years_M12">
-	    		<div class="number"><span class="variable"><%= global.Recovery_Years_M12.mean %></span> <span class="units"><%= units[global.Recovery_Years_M12.unit] %></span></div>
-	    		<span class="description">Predicted Recovery Time
-	    			<i title="Estimated time it would take for a cell to recover up to 90% of the predicted fish stock capacity of that cell if fishing stopped." class="fa fa-info-circle info-tooltip"></i></span>
+			<div class="stat" data-layer-bahamas-idx="11" data-layer-micronesia-idx="5" data-layer="Percent_Gain">
+				<div class="number"><span class="variable"><%= _(selectedData).find({PARAMETER: 'Percent_Gain'}).MEAN %></span> <span class="units"><%= units[_(selectedData).find({PARAMETER: 'Percent_Gain'}).UNIT] %></span></div>
+				<span class="description">Predicted Gain Standing Stock
+					<i title="The expected percent increase in fish stocks if fishing were reduced to 0 in each 1 HA cell. This could be through a marine reserve or some other fisheries management measure." class="fa fa-info-circle info-tooltip"></i></span>
 
-	    	</div>
+			</div>
 
-	    </div>
+			<div class="stat" data-layer-bahamas-idx="12" data-layer-micronesia-idx="7" data-layer="Recovery_Years">
+				<div class="number"><span class="variable"><%= _(selectedData).find({PARAMETER: 'Recovery_Years'}).MEAN %></span> <span class="units"><%= units[_(selectedData).find({PARAMETER: 'Recovery_Years'}).UNIT] %></span></div>
+				<span class="description">Predicted Recovery Time
+					<i title="Estimated time it would take for a cell to recover up to 90% of the predicted fish stock capacity of that cell if fishing stopped." class="fa fa-info-circle info-tooltip"></i></span>
 
-	    <div class="chart-description">
-	    The colored boxes represent where 50% of the data fall. Hover over the chart for more info.</div>
-	    <div class="chartContainer">
+			</div>
 
-	    </div>
+		</div>
+
+		<div class="chart-description">
+			The colored boxes represent where 50% of the data fall. Hover over the chart for more info.</div>
+		<div class="chartContainer">
+
+		</div>
+
 
 	</div>
-
 </script>

@@ -9,8 +9,11 @@ define([
             constructor: function(data) {
                 this.savedState = _.defaults({}, data, {
                     region: 'Micronesia',
-                    layer: 'Fishing_Pressure_M1',
-                    layerIDX: 3
+                    subregion: 'Micronesia',
+                    layer: 'Fishing_Pressure',
+                    layerIDX: 3,
+                    layerBahamasIDX: 9,
+                    layerMicronesiaIDX: 3,
                 });
             },
 
@@ -18,15 +21,24 @@ define([
                 return this.savedState;
             },
 
-            setRegion: function(region) {
+            setSubregion: function(subregion) {
                 return this.clone({
-                    region: region
+                    subregion: subregion
                 });
-                console.log(this.savedState);
+            },
+
+            getSubregion: function() {
+                return this.savedState.subregion;
             },
 
             getRegion: function() {
                 return this.savedState.region;
+            },
+
+            setRegion: function(region) {
+                return this.clone({
+                    region: region
+                });
             },
 
             setLayer: function(layer) {
@@ -47,6 +59,26 @@ define([
 
             getLayerIDX: function() {
                 return this.savedState.layerIDX;
+            },
+
+            getLayerBahamasIDX: function() {
+                return this.savedState.layerBahamasIDX;
+            },
+
+            setLayerBahamasIDX: function(layerBahamasIDX) {
+                return this.clone({
+                    layerBahamasIDX: layerBahamasIDX
+                });
+            },
+
+            getLayerMicronesiaIDX: function() {
+                return this.savedState.layerMicronesiaIDX;
+            },
+
+            setLayerMicronesiaIDX: function(layerMicronesiaIDX) {
+                return this.clone({
+                    layerMicronesiaIDX: layerMicronesiaIDX
+                });
             },
 
             // Return new State combined with `data`.

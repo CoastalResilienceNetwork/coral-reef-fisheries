@@ -1,6 +1,6 @@
 {
 	"Micronesia" : {
-		"EXTENT" : [104,2,183,22]
+		"EXTENT" : [129.71,-1.359,175.382,23.942]
 	},
 	"Chuuk" : {
 		"EXTENT" : [150.551,7.021,152.438,7.750],
@@ -74,6 +74,79 @@
 		"query": {
 			"type": "SUB_JURISD",
 			"label": "Yap"
+		}
+	},
+	"Bahamas" : {
+		"EXTENT" : [-81.231, 20.368,-71.909, 28.348]
+	},
+	"Andros" : {
+		"EXTENT" : [-78.165,23.377,-76.909,25.471],
+		"query": {
+			"type": "SUB_REGION",
+			"label": "Andros"
+		}
+	},
+	"Berry & Bimini Islands" : {
+		"EXTENT" : [-78.031082,25.378772,-77.700119,25.825235],
+		"query": {
+			"type": "SUB_REGION",
+			"label": "Berry & Bimini Islands"
+		}
+	},
+	"Cay Sal" : {
+		"EXTENT" : [-80.498,23.419,-79.477,24.155],
+		"query": {
+			"type": "SUB_REGION",
+			"label": "Cay Sal"
+		}
+	},
+	"Eleuthra" : {
+		"EXTENT" : [-76.991,24.094,-75.226,25.632],
+		"query": {
+			"type": "SUB_REGION",
+			"label": "Eleuthera"
+		}
+	},
+	"Exumas" : {
+		"EXTENT" : [-76.856,23.434,-75.430,24.938],
+		"query": {
+			"type": "SUB_REGION",
+			"label": "Exumas"
+		}
+	},
+	"Inagua" : {
+		"EXTENT" : [-73.708,20.867,-72.882,21.569],
+		"query": {
+			"type": "SUB_REGION",
+			"label": "Inagua"
+		}
+	},
+	"Little Bahama Bank" : {
+		"EXTENT" : [-79.191,25.799,-76.888,27.422],
+		"query": {
+			"type": "SUB_REGION",
+			"label": "Little Bahama Bank"
+		}
+	},
+	"Long & Ragged Islands" : {
+		"EXTENT" : [-78.977,21.713,-74.795,23.727],
+		"query": {
+			"type": "SUB_REGION",
+			"label": "Long & Ragged Islands"
+		}
+	},
+	"New Providence" : {
+		"EXTENT" : [-77.586,23.375,-76.493,25.235],
+		"query": {
+			"type": "SUB_REGION",
+			"label": "New Providence"
+		}
+	},
+	"SE Bahamas" : {
+		"EXTENT" : [-75.139,21.662,-72.646,24.193],
+		"query": {
+			"type": "SUB_REGION",
+			"label": "SE Bahamas"
 		}
 	}
 }
