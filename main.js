@@ -213,6 +213,11 @@ define([
                 this.subregions = _(this.data).chain().where({
                     'REGION': this.region
                 }).pluck('SUBREGION').uniq().value();
+                if (this.region === 'Bahamas') {
+                    this.$el.find('#tech-report-link').attr('href', 'http://media.coastalresilience.org/MOW/TNC%20Bahamas%20final%20report%20v1.1.pdf');
+                } else {
+                    this.$el.find('#tech-report-link').attr('href', 'http://ow-maps.coastalresilience.org/Reports/TNC%20final%20technical%20report%20v1.1.pdf');
+                }
 
                 select.html('');
                 _(this.subregions).each(function(subregion){
