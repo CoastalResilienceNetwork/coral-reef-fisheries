@@ -144,8 +144,8 @@ define([
                     subregion: this.state.getSubregion(),
                     layer: this.state.getLayer(),
                     layerIDX: this.state.getLayerIDX(),
-                    layerBahamasIDX: this.state.getlayerBahamasIDX(),
-                    layerMicronesiaIDX: this.state.getlayerMicronesiaIDX()
+                    layerBahamasIDX: this.state.getLayerBahamasIDX(),
+                    layerMicronesiaIDX: this.state.getLayerMicronesiaIDX()
                 };
             },
 
