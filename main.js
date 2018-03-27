@@ -49,7 +49,7 @@ define([
 ) {
         return declare(PluginBase, {
             toolbarName: 'Fisheries',
-            fullName: 'Configure and control layers to be overlayed on the base map.',
+            fullName: 'Coral Reef Fisheries',
             resizable: false,
             width: 425,
             // Disable the default legend item which doesn't pick up our custom class breaks
