@@ -132,6 +132,7 @@ define([
 
             setState: function(data) {
                 this.state = new State(data);
+                this.region = data.region;
                 this.subregion = data.subregion;
                 this.layer = data.layer;
                 this.layerIDX = data.layerIDX;
@@ -141,6 +142,7 @@ define([
 
             getState: function() {
                 return {
+                    region: this.state.getRegion(),
                     subregion: this.state.getSubregion(),
                     layer: this.state.getLayer(),
                     layerIDX: this.state.getLayerIDX(),
@@ -209,7 +211,9 @@ define([
             },
 
             changeRegion: function() {
+                this.$el.find('#crf-select-region').val(this.region).trigger('chosen:updated');
                 var select = this.$el.find('#crf-select-subregion');
+                this.state = this.state.setRegion(this.region);
                 this.subregions = _(this.data).chain().where({
                     'REGION': this.region
                 }).pluck('SUBREGION').uniq().value();
