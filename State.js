@@ -11,9 +11,10 @@ define([
                     region: 'Micronesia',
                     subregion: 'Micronesia',
                     layer: 'Fishing_Pressure',
-                    layerIDX: 3,
-                    layerBahamasIDX: 9,
-                    layerMicronesiaIDX: 3,
+                    layerIDX: 9,
+                    layerBahamasIDX: 15,
+                    layerMicronesiaIDX: 9,
+                    layerFlordiaIDX: 3,
                 });
             },
 
@@ -78,6 +79,16 @@ define([
             setLayerMicronesiaIDX: function(layerMicronesiaIDX) {
                 return this.clone({
                     layerMicronesiaIDX: layerMicronesiaIDX
+                });
+            },
+
+            getLayerFloridaIDX: function() {
+                return this.savedState.layerFloridaIDX;
+            },
+
+            setLayerFloridaIDX: function(layerFloridaIDX) {
+                return this.clone({
+                    layerFloridaIDX: layerFloridaIDX
                 });
             },
 

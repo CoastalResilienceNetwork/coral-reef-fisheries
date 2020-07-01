@@ -148,5 +148,36 @@
 			"type": "SUB_REGION",
 			"label": "SE Bahamas"
 		}
+	},
+	"Florida" : {
+		"EXTENT" : [-81.231, 20.368,-71.909, 28.348]
+	},
+	"Biscayne National Park" : {
+		"EXTENT" : [-75.139,21.662,-72.646,24.193],
+		"query": {
+			"type": "SUB_REGION",
+			"label": "Biscayne National Park"
+		}
+	},
+	"Coral Ecosystem Conservation Area" : {
+		"EXTENT" : [-75.139,21.662,-72.646,24.193],
+		"query": {
+			"type": "SUB_REGION",
+			"label": "Coral Ecosystem Conservation Area"
+		}
+	},
+	"Tortugas National Park" : {
+		"EXTENT" : [-75.139,21.662,-72.646,24.193],
+		"query": {
+			"type": "SUB_REGION",
+			"label": "Tortugas National Park"
+		}
+	},
+	"Florida Keys National Marine Sanctuary" : {
+		"EXTENT" : [-75.139,21.662,-72.646,24.193],
+		"query": {
+			"type": "SUB_REGION",
+			"label": "Florida Keys National Marine Sanctuary"
+		}
 	}
 }
