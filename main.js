@@ -224,7 +224,7 @@ define([
                 if (this.region === 'Bahamas') {
                     this.$el.find('#tech-report-link').attr('href', 'http://media.coastalresilience.org/MOW/TNC%20Bahamas%20final%20report%20v1.1.pdf');
                 } else if (this.region === 'Florida') {
-                    this.$el.find('#tech-report-link').attr('href', 'http://ow-maps.coastalresilience.org/Reports/Florida');
+                    this.$el.find('#tech-report-link').attr('href', 'https://oceanwealth.org/wp-content/uploads/2020/07/Florida-fishfisheries-phase-2-interim-report-final.pdf');
                 } else {
                     this.$el.find('#tech-report-link').attr('href', 'http://ow-maps.coastalresilience.org/Reports/TNC%20final%20technical%20report%20v1.1.pdf');
                 }
