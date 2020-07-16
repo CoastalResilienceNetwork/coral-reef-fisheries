@@ -89,6 +89,7 @@ define([
                 this.layerIDX = this.state.getLayerIDX();
                 this.layerBahamasIDX = this.state.getLayerBahamasIDX();
                 this.layerMicronesiaIDX = this.state.getLayerMicronesiaIDX();
+                this.layerFloridaIDX = this.state.getLayerFloridaIDX();
                 this.layer = this.state.getLayer();
 
 
@@ -138,6 +139,7 @@ define([
                 this.layerIDX = data.layerIDX;
                 this.layerBahamasIDX = data.layerBahamasIDX;
                 this.layerMicronesiaIDX = data.layerMicronesiaIDX;
+                this.layerFloridaIDX = data.layerFloridaIDX;
             },
 
             getState: function() {
@@ -147,7 +149,8 @@ define([
                     layer: this.state.getLayer(),
                     layerIDX: this.state.getLayerIDX(),
                     layerBahamasIDX: this.state.getLayerBahamasIDX(),
-                    layerMicronesiaIDX: this.state.getLayerMicronesiaIDX()
+                    layerMicronesiaIDX: this.state.getLayerMicronesiaIDX(),
+                    layerFloridaIDX: this.state.getLayerFloridaIDX()
                 };
             },
 
@@ -176,6 +179,7 @@ define([
                 this.layerIDX = this.state.getLayerIDX();
                 this.layerBahamasIDX = this.state.getLayerBahamasIDX();
                 this.layerMicronesiaIDX = this.state.getLayerMicronesiaIDX();
+                this.layerFloridaIDX = this.state.getLayerFloridaIDX();
 
                 // If the plugin hasn't been opened, or if it was closed (not-minimized)
                 // run the firstLoad function and reset the default variables
@@ -219,6 +223,8 @@ define([
                 }).pluck('SUBREGION').uniq().value();
                 if (this.region === 'Bahamas') {
                     this.$el.find('#tech-report-link').attr('href', 'http://media.coastalresilience.org/MOW/TNC%20Bahamas%20final%20report%20v1.1.pdf');
+                } else if (this.region === 'Florida') {
+                    this.$el.find('#tech-report-link').attr('href', 'https://oceanwealth.org/wp-content/uploads/2020/07/Florida-fishfisheries-phase-2-interim-report-final.pdf');
                 } else {
                     this.$el.find('#tech-report-link').attr('href', 'http://ow-maps.coastalresilience.org/Reports/TNC%20final%20technical%20report%20v1.1.pdf');
                 }
@@ -282,14 +288,27 @@ define([
             },
 
             setLayerDefinitions: function() {
-                if (this.subregion === 'Micronesia' || this.subregion === 'Bahamas') {
-                    this.layerIDX = this.region === 'Micronesia' ? this.layerMicronesiaIDX : this.layerBahamasIDX;
+                if (this.subregion === 'Micronesia' || this.subregion === 'Bahamas' || this.subregion === 'Florida') {
+                    if (this.region === 'Micronesia') {
+                        this.layerIDX = this.layerMicronesiaIDX;
+                    } else if (this.region === 'Bahamas') {
+                        this.layerIDX = this.layerBahamasIDX;
+                    } else if (this.region === 'Florida') {
+                        this.layerIDX = this.layerFloridaIDX;
+                    }
                     this.fisheriesLayer.setVisibleLayers([this.layerIDX]);
                     this.fisheriesLayer.setLayerDefinitions([]);
                 } else {
                     var layerDefs = [];
                     var params = this.countryConfig[this.subregion].query;
-                    this.layerIDX = this.region === 'Micronesia' ? this.layerMicronesiaIDX : this.layerBahamasIDX;
+
+                    if (this.region === 'Micronesia') {
+                        this.layerIDX = this.layerMicronesiaIDX;
+                    } else if (this.region === 'Bahamas') {
+                        this.layerIDX = this.layerBahamasIDX;
+                    } else if (this.region === 'Florida') {
+                        this.layerIDX = this.layerFloridaIDX;
+                    }
                     this.fisheriesLayer.setVisibleLayers([this.layerIDX]);
                     layerDefs[this.layerIDX] = params.type + '=\'' + params.label + '\'';
 
@@ -303,7 +322,15 @@ define([
                 this.layer = $(e.currentTarget).closest('.stat').data('layer');
                 this.layerBahamasIDX = $(e.currentTarget).closest('.stat').data('layer-bahamas-idx');
                 this.layerMicronesiaIDX = $(e.currentTarget).closest('.stat').data('layer-micronesia-idx');
-                this.layerIDX = this.region === 'Micronesia' ? this.layerMicronesiaIDX : this.layerBahamasIDX;
+                this.layerFloridaIDX = $(e.currentTarget).closest('.stat').data('layer-florida-idx');
+
+                if (this.region === 'Micronesia') {
+                    this.layerIDX = this.layerMicronesiaIDX;
+                } else if (this.region === 'Bahamas') {
+                    this.layerIDX = this.layerBahamasIDX;
+                } else if (this.region === 'Florida') {
+                    this.layerIDX = this.layerFloridaIDX;
+                }
 
                 this.setLayerDefinitions();
                 this.changeScenario();
@@ -313,11 +340,30 @@ define([
             changeScenario: function() {
                 this.$el.find('.stat.active').removeClass('active');
                 this.$el.find('.stat[data-layer="' + this.layer + '"]').addClass('active');
-                this.layerIDX = this.region === 'Micronesia' ? this.layerMicronesiaIDX : this.layerBahamasIDX;
-                this.fisheriesLayer.setVisibleLayers([this.region === 'Micronesia' ? this.layerMicronesiaIDX : this.layerBahamasIDX]);
+                if (this.region === 'Micronesia') {
+                    this.layerIDX = this.layerMicronesiaIDX;
+                } else if (this.region === 'Bahamas') {
+                    this.layerIDX = this.layerBahamasIDX;
+                } else if (this.region === 'Florida') {
+                    this.layerIDX = this.layerFloridaIDX;
+                }
+                if (this.region === 'Micronesia') {
+                    this.fisheriesLayer.setVisibleLayers([this.layerMicronesiaIDX]);
+                } else if (this.region === 'Bahamas') {
+                    this.fisheriesLayer.setVisibleLayers([this.layerBahamasIDX]);
+                } else if (this.region === 'Florida') {
+                    this.fisheriesLayer.setVisibleLayers([this.layerFloridaIDX]);
+                }
                 this.state = this.state.setLayer(this.layer);
-                this.state = this.state.setLayerIDX(this.region === 'Micronesia' ? this.layerMicronesiaIDX : this.layerBahamasIDX);
 
+                if (this.region === 'Micronesia') {
+                    this.state = this.state.setLayerIDX(this.layerMicronesiaIDX);
+                } else if (this.region === 'Bahamas') {
+                    this.state = this.state.setLayerIDX(this.layerBahamasIDX);
+                } else if (this.region === 'Florida') {
+                    this.state = this.state.setLayerIDX(this.layerFloridaIDX);
+                }
+                
                 this.updateChart();
             },
 
