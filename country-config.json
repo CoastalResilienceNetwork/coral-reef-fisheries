@@ -160,21 +160,21 @@
 		}
 	},
 	"Coral Ecosystem Conservation Area" : {
-		"EXTENT" : [-79.611328, 27.459540,-80.726440, 25.631622],
+		"EXTENT" : [-80.726440, 25.631622, -79.611328, 27.459540],
 		"query": {
 			"type": "SUB_REGION",
 			"label": "Coral Ecosystem Conservation Area"
 		}
 	},
 	"Tortugas National Park" : {
-		"EXTENT" : [-82.759680, 24.746582,-83.054861, 24.513776],
+		"EXTENT" : [-83.054861, 24.513776, -82.759680, 24.746582],
 		"query": {
 			"type": "SUB_REGION",
 			"label": "Tortugas National Park"
 		}
 	},
 	"Florida Keys National Marine Sanctuary" : {
-		"EXTENT" : [-80.007826, 25.575149,-82.314353, 24.385126],
+		"EXTENT" : [-82.314353, 24.385126, -80.007826, 25.575149],
 		"query": {
 			"type": "SUB_REGION",
 			"label": "Florida Keys National Marine Sanctuary"

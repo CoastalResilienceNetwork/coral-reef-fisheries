@@ -14,7 +14,7 @@ define([
                     layerIDX: 9,
                     layerBahamasIDX: 15,
                     layerMicronesiaIDX: 9,
-                    layerFlordiaIDX: 3,
+                    layerFloridaIDX: 3,
                 });
             },
 
