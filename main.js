@@ -230,6 +230,14 @@ define([
                     this.$el.find('#tech-report-link').attr('href', 'http://ow-maps.coastalresilience.org/Reports/TNC%20final%20technical%20report%20v1.1.pdf');
                 }
 
+                if (this.region === 'Florida') {
+                    this.$el.find('[data-layer="Fishing_Pressure"] i').attr('title', 'Estimated cumulative fishing impact using biomass of snapper-grouper complex scaled from 0 (no fishing) to 1 (highest fishing in region)');
+                    this.$el.find('[data-layer="Standing_Stock"] i').attr('title', 'Predicted current total biomass of all species documented in Reef Visual Census surveys');
+                } else {
+                    this.$el.find('[data-layer="Fishing_Pressure"] i').attr('title', 'Estimated current fishing pressure on coral reef fisheries using the impact on size of parrotfish scaled from 0 (No fishing) to 1 (Highest fishing in region)');
+                    this.$el.find('[data-layer="Standing_Stock"] i').attr('title', 'Predicted current biomass 19 key coral reef fishery species including, Orange-spine surgeonfish, Blue-spine unicornfish, Bluefin trevally, Chub or drummer, Humphead wrasse, Orange-striped emperor, Longface emperor, Two-spot red snapper, Humpback red snapper, Bicolour parrotfish, Steephead parrotfish, Bullethead parrotfish, Pacific longnose parrotfish, Redlip parrotfish, Brown-marbled grouper, Camouflage grouper, Black-saddled coral grouper, Forktail rabbitfish, and Gold-spotted rabbitfish.')
+                }
+
                 select.html('');
                 _(this.subregions).each(function(subregion){
                     select.append($('<option value="' + subregion + '">' + subregion + '</option>'));
@@ -310,6 +318,7 @@ define([
                     } else if (this.region === 'Florida') {
                         this.layerIDX = this.layerFloridaIDX;
                     }
+
                     this.fisheriesLayer.setVisibleLayers([this.layerIDX]);
                     layerDefs[this.layerIDX] = params.type + '=\'' + params.label + '\'';
 
