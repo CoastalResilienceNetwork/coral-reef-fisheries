@@ -201,6 +201,36 @@ define([
                 this.changeScenario();
             },
 
+            // credit: https://bl.ocks.org/mbostock/7555321
+            wrap: function (text, width) {
+                text.each(function() {
+                  var text = d3.select(this),
+                      words = text.text().split(/\s+/).reverse(),
+                      word,
+                      line = [],
+                      lineNumber = 0,
+                      lineHeight = 0.7, // ems
+                      x = text.attr('x')
+                      y = text.attr("y"),
+                      dy = parseFloat(text.attr("dy")),
+                      tspan = text.text(null).append("tspan").attr("x", -10).attr("y", y).attr("dy", dy + "em");
+
+                  while (word = words.pop()) {
+                    line.push(word);
+                    tspan.text(line.join(" "));
+                    if (tspan.node().getComputedTextLength() > width) {
+                      line.pop();
+                      tspan.text(line.join(" "));
+                      line = [word];
+                      
+                     text.select("tspan").attr('dy', '-4')
+                      tspan = text.append("tspan").attr("x", x).attr("dy", '16').text(word);
+                      lineNumber++
+                    }
+                  }                  
+                });
+              },
+
             // format a number with commas
             numberWithCommas: function(number) {
                 return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
@@ -481,6 +511,8 @@ define([
                         }
                     })
                     .orient('left');
+                
+                this.chart.svg.selectAll('.yaxis .tick text').call(this.wrap, 100);
 
                 this.chart.xAxis = d3.svg.axis()
                     .scale(this.chart.x)
@@ -571,6 +603,9 @@ define([
                 this.chart.svg.selectAll('.yaxis')
                     .transition().duration(1000)
                     .call(this.chart.yAxis);
+
+                this.chart.svg.selectAll('.yaxis .tick text')
+                    .call(this.wrap, 150);
 
                 // Change datasets
 
