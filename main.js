@@ -52,6 +52,7 @@ define([
             fullName: 'Coral Reef Fisheries',
             resizable: false,
             width: 425,
+            infographic: [600, 499],
             // Disable the default legend item which doesn't pick up our custom class breaks
             showServiceLayersInLegend: true,
             allowIdentifyWhenActive: false,
@@ -403,18 +404,6 @@ define([
                 this.$el.find('#' + this.id).html(idUpdate);
 
                 $(this.container).parent().find('.viewCrsInfoGraphicIcon').remove();
-                $(this.container).parent().find('.sidebar-nav').prepend(
-                    _.template(this.getTemplateById('info-button-template'))
-                );
-                $(this.container).parent().find('.viewCrsInfoGraphicIcon').on('click', function(c) {
-                    TINY.box.show({
-                        animate: true,
-                        url: 'plugins/coral-reef-fisheries/infographic.html',
-                        fixed: true,
-                        width: 600,
-                        height: 497
-                    });
-                }).tooltip();
 
                 this.$el.find('#crf-select-region').chosen({
                     disable_search_threshold: 20,
