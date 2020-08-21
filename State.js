@@ -8,13 +8,13 @@ define([
         var State = declare(null, {
             constructor: function(data) {
                 this.savedState = _.defaults({}, data, {
-                    region: 'Micronesia',
-                    subregion: 'Micronesia',
+                    region: 'Florida',
+                    subregion: 'Florida',
                     layer: 'Fishing_Pressure',
                     layerIDX: 9,
                     layerBahamasIDX: 15,
                     layerMicronesiaIDX: 9,
-                    layerFloridaIDX: 3,
+                    layerFloridaIDX: 4,
                 });
             },
 

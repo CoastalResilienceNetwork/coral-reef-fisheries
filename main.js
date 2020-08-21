@@ -112,6 +112,7 @@ define([
 
             processData: function(data) {
                 var transformedData = [];
+                var that = this;
                 $.each(data.features, function(idx, datum) {
                     transformedData.push(datum.attributes);
                 });
@@ -119,7 +120,14 @@ define([
                 this.regions = _(this.data).chain().pluck('REGION').uniq().value();
                 this.subregions = _(this.data).chain().where({
                     'REGION': this.region
-                }).pluck('SUBREGION').uniq().value();
+                }).pluck('SUBREGION').uniq().value().sort(function(a,b) {
+                    if (a === that.region) {
+                        return -1
+                    } else if (b === that.region) {
+                        return 1;
+                    }
+                    return a.localeCompare(b)
+                });
             },
 
             bindEvents: function() {
@@ -246,12 +254,21 @@ define([
             },
 
             changeRegion: function() {
+                var that = this;
                 this.$el.find('#crf-select-region').val(this.region).trigger('chosen:updated');
                 var select = this.$el.find('#crf-select-subregion');
                 this.state = this.state.setRegion(this.region);
                 this.subregions = _(this.data).chain().where({
                     'REGION': this.region
-                }).pluck('SUBREGION').uniq().value();
+                }).pluck('SUBREGION').uniq().value().sort(function(a,b) {
+                    if (a === that.region) {
+                        return -1
+                    } else if (b === that.region) {
+                        return 1;
+                    }
+                    return a.localeCompare(b)
+                });
+
                 if (this.region === 'Bahamas') {
                     this.$el.find('#tech-report-link').attr('href', 'http://media.coastalresilience.org/MOW/TNC%20Bahamas%20final%20report%20v1.1.pdf');
                 } else if (this.region === 'Florida') {
@@ -299,8 +316,10 @@ define([
                     subregionExtent[2],
                     subregionExtent[3]
                 );
-
-                this.map.setExtent(extent);
+                
+                window.setTimeout(function() {
+                    self.map.setExtent(extent);
+                }, 1)
 
                 var datum = _(self.data).where({
                     REGION: self.region,
