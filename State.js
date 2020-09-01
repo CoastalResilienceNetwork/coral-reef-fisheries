@@ -8,12 +8,13 @@ define([
         var State = declare(null, {
             constructor: function(data) {
                 this.savedState = _.defaults({}, data, {
-                    region: 'Micronesia',
-                    subregion: 'Micronesia',
+                    region: 'Florida',
+                    subregion: 'Florida',
                     layer: 'Fishing_Pressure',
-                    layerIDX: 3,
-                    layerBahamasIDX: 9,
-                    layerMicronesiaIDX: 3,
+                    layerIDX: 9,
+                    layerBahamasIDX: 15,
+                    layerMicronesiaIDX: 9,
+                    layerFloridaIDX: 4,
                 });
             },
 
@@ -78,6 +79,16 @@ define([
             setLayerMicronesiaIDX: function(layerMicronesiaIDX) {
                 return this.clone({
                     layerMicronesiaIDX: layerMicronesiaIDX
+                });
+            },
+
+            getLayerFloridaIDX: function() {
+                return this.savedState.layerFloridaIDX;
+            },
+
+            setLayerFloridaIDX: function(layerFloridaIDX) {
+                return this.clone({
+                    layerFloridaIDX: layerFloridaIDX
                 });
             },
 
