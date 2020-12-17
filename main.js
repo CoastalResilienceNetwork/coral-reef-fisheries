@@ -331,6 +331,10 @@ define([
                 var predicted = _(datum).find({PARAMETER: 'Percent_Gain'}).MEAN;
                 var recovery = _(datum).find({PARAMETER: 'Recovery_Years'}).MEAN;
 
+                if (self.region === 'Florida') {
+                    stock = (stock / 10).toFixed(2)
+                }
+
                 this.$el.find('.stat[data-layer="Fishing_Pressure"] .variable').html(pressure);
                 this.$el.find('.stat[data-layer="Standing_Stock"] .variable').html(stock);
                 this.$el.find('.stat[data-layer="Percent_Gain"] .variable').html(predicted);
